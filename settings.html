@@ -1,0 +1,277 @@
+{% extends "dash_base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<!-- TOAST CONTAINER -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
+    <div id="toastContainer"></div>
+</div>
+
+<div class="container py-4" style="background: #f4f6f9; min-height: 100vh;">
+
+    <h3 class="mb-4 text-success">Settings</h3>
+
+    <div class="row g-4">
+
+        <!-- ACCOUNT CARD -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Account</h5>
+                    <p class="small text-muted">Manage your personal info</p>
+
+                    <p><strong>Name:</strong> <span class="user-fullname">{{ current_user.full_names }}</span></p>
+                    <p><strong>Email:</strong> <span class="user-email">{{ current_user.email }}</span></p>
+                    <p><strong>Username:</strong> <span class="user-username">{{ current_user.username }}</span></p>
+
+                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#accountModal">
+                        Edit
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASSWORD CARD -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Security</h5>
+                    <p class="small text-muted">Update your password</p>
+                    <p>Password: ••••••••</p>
+
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                        Change Password
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOCATION CARD -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Location</h5>
+                    <p class="small text-muted">Update your location</p>
+                    <p><strong>Location:</strong> <span class="user-location">{{ current_user.location }}</span></p>
+
+                    <button class="btn btn-info btn-sm text-white" data-bs-toggle="modal" data-bs-target="#locationModal">
+                        Edit Location
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- ACCOUNT MODAL -->
+<div class="modal fade" id="accountModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="accountForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input id="full_names" class="form-control mb-2" value="{{ current_user.full_names }}">
+                    <input id="username" class="form-control mb-2" value="{{ current_user.username }}">
+                    <input id="email" class="form-control mb-2" value="{{ current_user.email }}">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal fade" id="passwordModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="passwordForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input id="old_password" type="password" class="form-control mb-2" placeholder="Old Password">
+                    <input id="new_password" type="password" class="form-control mb-2" placeholder="New Password">
+                    <input id="confirm_password" type="password" class="form-control mb-2" placeholder="Confirm Password">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- LOCATION MODAL -->
+<div class="modal fade" id="locationModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="locationForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input id="location" class="form-control" value="{{ current_user.location }}">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info text-white">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("content");
+    const toggleBtn = document.getElementById("toggleBtn");
+
+    toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        content.classList.toggle("expanded");
+    });
+
+    document.addEventListener("DOMContentLoaded", function(){
+
+        function showToast(message, type="success") {
+            const toast = document.createElement("div");
+            toast.className = `toast align-items-center text-bg-${type} border-0`;
+            toast.role = "alert";
+            toast.setAttribute("aria-live", "assertive");
+            toast.setAttribute("aria-atomic", "true");
+
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+
+            document.getElementById("toastContainer").appendChild(toast);
+
+            const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
+            bsToast.show();
+
+            toast.addEventListener("hidden.bs.toast", () => toast.remove());
+        }
+
+    /* ================= ACCOUNT ================= */
+    document.getElementById("accountForm").addEventListener("submit", async function(e){
+        e.preventDefault();
+
+        const data = {
+            full_names: document.getElementById("full_names").value,
+            username: document.getElementById("username").value,
+            email: document.getElementById("email").value
+        };
+
+        try {
+            const res = await fetch("{{ url_for('auth.update_account') }}", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if(res.ok){
+                showToast(result.message || "Account updated ✅","success");
+
+                document.querySelector(".user-fullname").textContent = data.full_names;
+                document.querySelector(".user-username").textContent = data.username;
+                document.querySelector(".user-email").textContent = data.email;
+
+                const modalEl = document.getElementById('accountModal');
+                bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+            } else {
+                showToast(result.error || "Update failed","error");
+            }
+
+        } catch(err){
+            showToast("Something went wrong","error");
+        }
+    });
+
+    /* ================= PASSWORD ================= */
+    document.getElementById("passwordForm").addEventListener("submit", async function(e){
+        e.preventDefault();
+
+        const data = {
+            old_password: document.getElementById("old_password").value,
+            new_password: document.getElementById("new_password").value,
+            confirm_password: document.getElementById("confirm_password").value
+        };
+
+        try {
+            const res = await fetch("{{ url_for('auth.change_password') }}", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if(res.ok){
+                showToast(result.message || "Password updated 🔐","success");
+                document.getElementById("passwordForm").reset();
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal')).hide();
+            } else {
+                showToast(result.error || "Update failed","error");
+            }
+
+        } catch(err){
+            showToast("Something went wrong","error");
+        }
+    });
+
+    /* ================= LOCATION ================= */
+    document.getElementById("locationForm").addEventListener("submit", async function(e){
+        e.preventDefault();
+
+        const data = {
+            location: document.getElementById("location").value
+        };
+
+        try {
+            const res = await fetch("{{ url_for('auth.update_location') }}", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if(res.ok){
+                showToast(result.message || "Location updated 📍","success");
+                document.querySelector(".user-location").textContent = data.location;
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('locationModal')).hide();
+            } else {
+                showToast(result.error || "Update failed","error");
+            }
+
+        } catch(err){
+            showToast("Something went wrong","error");
+        }
+    });
+
+});
+</script>
+{% endblock %}
