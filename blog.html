@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}
+Blog
+{% endblock %}
+
+{% block content %}
+<!-- Blog Header -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card blog-card border-0 p-4">
+                <div class="card-body text-center">
+
+                    <h3 class="fw-bold mb-3">FarmHub Blog</h3>
+
+                    <p class="text-muted">
+                        The FarmHub Blog is your trusted source for modern farming knowledge. 
+                        We share expert insights on crop management, pest control strategies, 
+                        market price trends, weather updates, and innovative Agri-tech solutions 
+                        to help farmers grow smarter and earn more.
+                    </p>
+
+                    <p class="text-muted">
+                        Stay informed, stay competitive, and become part of a community 
+                        that believes in technology-driven agriculture.
+                    </p>
+
+                    <a href="#" class="btn btn-success mt-3 px-4">
+                        Explore Articles
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Blog Post Card -->
+<div class="container py-5">
+    <div class="row g-4 justify-content-center">
+
+        <!-- First Blog card -->
+        {% for post in posts %}
+        <div  class="col-12 col-md-6 col-lg-4">
+            <div class="card blog-card border-0">
+                <!-- Image -->
+                <img src="{{ url_for('static',filename='uploads/'+post.image) }}" 
+                     class="card-img-top" 
+                     alt="FarmHub Blog Post">
+
+                <div class="card-body">
+
+                    <!-- Date + Category Link -->
+                    <div class="d-flex justify-content-between mb-2">
+                        <small class="text-muted">{{ post.user_id}}</small>
+                        <a href="#" class="text-success text-decoration-none fw-semibold">
+                            Trending posts
+                        </a>
+                    </div>
+
+                    <!-- Title -->
+                    <h5 class="card-title fw-bold">
+                        {{ post.title }}
+                    </h5>
+
+                    <!-- Description -->
+                    <p class="card-text text-muted">
+                        {{ post.content }}
+                    </p>
+
+                    <!-- Read More Button -->
+                    <a href="#" class="btn btn-success btn-sm mb-3">
+                        Read More
+                    </a>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3">
+
+                        <div>
+                            <button class="btn btn-outline-danger btn-sm me-2">
+                                <i class="fa-solid fa-heart"></i> Like
+                            </button>
+
+                            <button class="btn btn-outline-primary btn-sm">
+                                <i class="fa-solid fa-comment"></i> Comment
+                            </button>
+                        </div>
+
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="fa-solid fa-download"></i> Save
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>      
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
