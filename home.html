@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}
+Welcome
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row g-4 justify-content-center">
+
+        <!-- Card 1 -->
+        <div class="col-md-4">
+            <div class="card h-80 shadow-sm">
+                <div class="card-img-top" style="height: 40%; overflow: hidden;">
+                    <img src="{{ url_for('static', filename='cow.jpg') }}" alt="Green Fields" class="w-100 h-100" style="object-fit: cover;">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Farmhub 🌽</h5>
+                    <p class="card-text flex-grow-1">
+                        FarmHub is a platform that connects farmers from different regions. It provides communities for discussion, AI tools for advice on farming methods and pest control, weather updates, market prices, and personalized dashboards. FarmHub helps farmers make smarter, more efficient, and profitable decisions.
+                    </p>
+                    <a href="{{ url_for('index') }}" class="btn btn-success">Explore</a>                   
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-4">
+            <div class="card h-80 shadow-sm">
+                <div class="card-img-top" style="height: 40%; overflow: hidden;">
+                    <img src="{{ url_for('static', filename='sprink.jpg') }}" alt="Sprinkler System" class="w-100 h-100" style="object-fit: cover;">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Why Choose FarmHub?</h5>
+                    <p class="card-text flex-grow-1">
+                        FarmHub empowers farmers with easy access to information, expert advice, and a supportive community. We provide real-time weather alerts, market insights, AI-driven guidance, and networking opportunities — all designed to help farmers increase productivity, reduce risks, and make informed decisions.
+                    </p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary mt-auto">Sign up</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-4">
+            <div class="card h-80 shadow-sm">
+                <div class="card-img-top" style="height: 40%; overflow: hidden;">
+                    <img src="{{ url_for('static', filename='coffe2.jpg') }}" alt="Tractor Work" class="w-100 h-100" style="object-fit: cover;">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Get Started</h5>
+                    <p class="card-text flex-grow-1">
+                        New to FarmHub? Press the Explore button to take a guided tour of the platform. Explore our communities, AI tools, market updates, and dashboards so you can quickly learn how to make the most of FarmHub and start improving your farm’s productivity.
+                    </p>
+                    <p>
+                    <details>
+                        <summary style="color: magenta;">Learn More</summary>
+                        <p>Our platform offers a comprehensive suite of tools designed to support farmers at every stage of their journey. From real-time market insights to AI-powered farming advice, FarmHub is your all-in-one solution for modern agriculture.</p>
+                    </details>
+                    <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                    </div>
+                    <div class="progress">
+                    <br><br>
+                    <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const btn = document.querySelector('.btn-primary');
+
+    btn.addEventListener('mouseover',function(){
+        btn.style.backgroundColor = "red";
+    })
+    btn.addEventListener('mouseout',function(){
+        btn.style.backgroundColor = "";
+    })
+
+</script>
+{% endblock %}
