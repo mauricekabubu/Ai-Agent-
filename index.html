@@ -1,0 +1,626 @@
+{% extends "base.html" %}
+
+{% block title %}
+Index page
+{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm py-2">
+    <div class="container">
+
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+            Farmhub 🌽
+        </a>
+
+        <!-- Toggler -->
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Centered Nav -->
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav gap-3">
+
+                <li class="nav-item">
+                    <a class="nav-link px-3" href="{{url_for('index')}}">
+                        <i class="fa-solid fa-house me-1"></i> Home
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link px-3" href="{{url_for('about')}}">
+                        <i class="fa-solid fa-question me-1"></i> About
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link px-3" href="{{ url_for('blog') }}">
+                        <i class="fa-solid fa-face-smile me-1"></i> Blog
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link px-3" href="{{ url_for('contact') }}">
+                        <i class="fa-solid fa-phone me-1"></i> Contact
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link px-3" href="{{url_for('auth.login')}}">
+                        <i class="fa-solid fa-user me-1"></i> Login
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+</nav>
+    <header id="hero" class="bg-dark text-white text-center py-5 position-relative">
+        <!-- Overlay -->
+        <div style="background-color: rgba(0,0,0,0.6); position: absolute; top:0; left:0; width:100%; height:100%;">
+
+        </div>
+        
+        <!-- Content -->
+        <div class="container position-relative">
+            <h1 class="display-4 fw-bold">FarmHub — Empowering Farmers with Smart Technology</h1>
+            <p class="lead mt-3">
+            Welcome to <strong>Farmhub </strong> Join a community of farmers, get AI farming advice,
+             real-time weather updates, and market prices — all in one place. Connecting Farmers. Empowering Growth. Transforming Agriculture.
+            </p>
+            <br>
+            <p>
+                <a class="btn btn-success me-2" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
+                    Our Vision
+                </a>
+                <button class="btn btn-warning me-2" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">
+                     Why Choose FarmHub?
+                </button>
+                <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">
+                    🔍 Learn More
+                </button>
+            </p>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="collapse multi-collapse" id="multiCollapseExample1">
+                        <div class="card shadow-lg border-0">
+                            <div class="card-body">
+                                <h4 class="text-success fw-bold">🌾 Our Vision</h4>
+                                <p>
+                                    To build Africa’s most intelligent agricultural ecosystem —
+                                    where farmers are connected, informed, and empowered by
+                                    technology to grow smarter, earn better, and thrive sustainably.
+                                </p>
+                                <ul>
+                                    <li>🌱 Empower farmers with smart digital tools</li>
+                                    <li>🌦 Provide real-time weather intelligence</li>
+                                    <li>📈 Deliver accurate market price insights</li>
+                                    <li>🤖 Integrate AI-powered farming assistance</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="collapse multi-collapse" id="multiCollapseExample2">
+                        <div class="card shadow-lg border-0">
+                            <div class="card-body">
+                                <h4 class="text-success fw-bold">Why Choose FarmHub</h4>
+                                <p>
+                                    FarmHub is more than a platform — it’s a farming revolution.
+                                </p>
+                                <ul>
+                                    <li>🤖 Smart AI advisory for crop & livestock health</li>
+                                    <li>📊 Real-time market and pricing updates</li>
+                                    <li>🌍 Farmer community network</li>
+                                    <li>🏆 Reward & reputation system</li>
+                                    <li>📱 Simple and accessible interface</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="feature-section py-5">
+                <div class="container">
+                    <div class="text-center mb-5">
+                        <h2 class="fw-bold display-6" style="color: blue;">Explore FarmHub</h2>
+                        <p class="text-muted" style="color: black;">Technology empowering modern farmers</p>
+                    </div>
+
+                    <div class="row g-4 justify-content-center">
+
+                        <!-- Feature -->
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="#" class="feature-card text-decoration-none text-dark">
+                                <div class="feature-inner text-center p-3">
+                                    <div class="circle-wrapper mx-auto mb-3">
+                                        <img src="{{ url_for('static', filename='community.avif') }}" alt="Community">
+                                    </div>
+                                    <h6 class="fw-bold">Communities</h6>
+                                    <p class="small text-muted">Connect & grow together.</p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="#" class="feature-card text-decoration-none text-dark">
+                                <div class="feature-inner text-center p-3">
+                                    <div class="circle-wrapper mx-auto mb-3">
+                                        <img src="{{ url_for('static', filename='Ai.avif') }}" alt="AI Assistant">
+                                    </div>
+                                    <h6 class="fw-bold">AI Assistant</h6>
+                                    <p class="small text-muted">Smart farming advice.</p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="#" class="feature-card text-decoration-none text-dark">
+                                <div class="feature-inner text-center p-3">
+                                    <div class="circle-wrapper mx-auto mb-3">
+                                        <img src="{{ url_for('static', filename='Money.jpg') }}" alt="Market">
+                                    </div>
+                                    <h6 class="fw-bold">Market</h6>
+                                    <p class="small text-muted">Live price tracking.</p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="#" class="feature-card text-decoration-none text-dark">
+                                <div class="feature-inner text-center p-3">
+                                    <div class="circle-wrapper mx-auto mb-3">
+                                        <img src="{{ url_for('static', filename='clouds.avif') }}" alt="Weather">
+                                    </div>
+                                    <h6 class="fw-bold">Weather</h6>
+                                    <p class="small text-muted">Accurate forecasts.</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        </div>
+    </header>
+    <br><br>
+    <section class="social-proof py-5 bg-white">
+        <div class="container text-center">
+            <h3 class="fw-bold mb-4">Trusted by Farmers Across the Region</h3>
+            <p class="text-muted mb-5">FarmHub is helping farmers grow smarter every day</p>
+
+            <div class="row g-4 justify-content-center">
+
+                <div class="col-6 col-md-3">
+                    <div class="stat-box p-4 rounded shadow-sm">
+                        <h2 class="fw-bold text-danger">500+</h2>
+                        <p class="mb-0 text-muted">Farmers Joined</p>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="stat-box p-4 rounded shadow-sm">
+                        <h2 class="fw-bold text-success">2,000+</h2>
+                        <p class="mb-0 text-muted">Questions Answered</p>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="stat-box p-4 rounded shadow-sm">
+                        <h2 class="fw-bold text-success">50+</h2>
+                        <p class="mb-0 text-muted">Active Communities</p>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="stat-box p-4 rounded shadow-sm">
+                        <h2 class="fw-bold text-info">1,000+</h2>
+                        <p class="mb-0 text-muted">AI Recommendations</p>
+                    </div>
+                </div>
+
+                <div id="testimonialCarousel" class="carousel slide mt-5" data-bs-ride="carousel">
+                    <div class="carousel-inner text-center">
+                        <div class="carousel-item active">
+                            <img src="{{ url_for('static', filename='oldman.jpg') }}" class="rounded-circle mb-3" width="80" alt="">
+                            <p class="fw-bold">“FarmHub doubled my maize yield!”</p>
+                            <p class="text-muted">– John Mwangi, Nairobi</p>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{{ url_for('static', filename='green.jpg') }}" class="rounded-circle mb-3" width="80" alt="">
+                            <p class="fw-bold">“AI advice helped me control pests effectively.”</p>
+                            <p class="text-muted">– Grace Njeri, Kiambu</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <br><br>
+    <div class="jumbotron text-center bg-light p-5 rounded">
+        <h1 class="display-4">About us & Our Mission</h1>
+        <p class="lead">why FarmHub exists and what we're trying to achieve</p>
+        <hr class="my-4">
+        <p>FarmHub is where technology meets farming. We empower farmers with smart AI insights, real-time market data, and a vibrant community to share knowledge 
+            and grow together. From predicting the weather to tracking crop health, we give farmers the tools to farm smarter, earn more, and shape the future of agriculture. With FarmHub, farming is no longer just hard work—it’s smart, connected, and rewarding.</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+        </p>
+    </div>
+    
+    <br>
+    <div class="container py-5">
+        <div class="row g-4 justify-content-center">
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card product-card shadow-sm border-0">
+
+                    <!-- Image Wrapper -->
+                    <div class="position-relative overflow-hidden">
+
+                        <img src="{{ url_for('static', filename='green.jpg') }}"
+                            class="card-img-top"
+                            style="height: 250px; object-fit: cover;"
+                            alt="Green Fields">
+
+                        <!-- Hover Overlay -->
+                        <div class="quick-view-overlay d-flex justify-content-center align-items-center">
+                            <a href="#" class="btn btn-light fw-semibold">
+                                Quick View
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column">
+
+                        <h5 class="card-title">Seeds</h5>
+
+                        <p class="card-text text-muted flex-grow-1">
+                            Find a wide variety of high-quality seeds for all types of crops,
+                            sourced directly from trusted farmers and suppliers.
+                        </p>
+
+                        <!-- Bottom Section -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+
+                            <span class="fw-bold text-success">KES 1,200</span>
+
+                            <button class="btn btn-outline-success rounded-circle">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card2 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card product-card shadow-sm border-0">
+
+                    <!-- Image Wrapper -->
+                    <div class="position-relative overflow-hidden">
+
+                        <img src="{{ url_for('static', filename='fruits.jpg') }}"
+                            class="card-img-top"
+                            style="height: 250px; object-fit: cover;"
+                            alt="Green Fields">
+
+                        <!-- Hover Overlay -->
+                        <div class="quick-view-overlay d-flex justify-content-center align-items-center">
+                            <a href="#" class="btn btn-light fw-semibold">
+                                Quick View
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column">
+
+                        <h5 class="card-title">Fruits</h5>
+
+                        <p class="card-text text-muted flex-grow-1">
+                            Find a wide variety of high-quality fruits for all types of crops,
+                            sourced directly from trusted farmers and suppliers.
+                        </p>
+
+                        <!-- Bottom Section -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+
+                            <span class="fw-bold text-success">KES 1,500</span>
+
+                            <button class="btn btn-outline-success rounded-circle">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card product-card shadow-sm border-0">
+
+                    <!-- Image Wrapper -->
+                    <div class="position-relative overflow-hidden">
+
+                        <img src="{{ url_for('static', filename='coffee1.jpg') }}"
+                            class="card-img-top"
+                            style="height: 250px; object-fit: cover;"
+                            alt="Green Fields">
+
+                        <!-- Hover Overlay -->
+                        <div class="quick-view-overlay d-flex justify-content-center align-items-center">
+                            <a href="#" class="btn btn-light fw-semibold">
+                                Quick View
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column">
+
+                        <h5 class="card-title">Coffee Seeds</h5>
+
+                        <p class="card-text text-muted flex-grow-1">
+                            Find a wide variety of high-quality coffee seeds for all types of crops,
+                            sourced directly from trusted farmers and suppliers.
+                        </p>
+
+                        <!-- Bottom Section -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+
+                            <span class="fw-bold text-success">KES 3,200</span>
+
+                            <button class="btn btn-outline-success rounded-circle">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>           
+        </div>
+    </div>
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Text Content -->
+                <div class="col-md-7">
+                    <h2 class="fw-bold text-primary">👥 Communities</h2>
+                    <p class="lead">
+                    Just like a farmer’s market brings together growers and buyers, FarmHub’s communities connect farmers to share knowledge, ask questions, and grow together. Whether you’re a maize farmer in Kenya or a livestock keeper in Nigeria, our communities are where
+                     you can find support, advice, and camaraderie from fellow farmers who understand your challenges and triumphs.
+                    </p>
+                    <p>
+                    We bring<strong>farmers together from diverse regions</strong>, <strong>Better communication</strong>, and <strong>trusted support</strong> So you can easily connect with others in your farming community.
+                    </p>
+                    <a href="{{url_for('index')}}" class="btn btn-success btn-lg mt-3">
+                    Explore Communities →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <br><br>
+    <div class="container py-5">
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="row g-0 align-items-center">
+            
+                <!-- Left Image -->
+                <div class="col-md-5">
+                    <img src="{{ url_for('static', filename='Money.jpg') }}" class="img-fluid rounded-start" alt="Market Trends">
+                </div>
+
+                <!-- Right Content -->
+                <div class="col-md-7">
+                    <div class="card-body">
+                    <h5 class="card-title fw-bold">Market Trends & Prices</h5>
+                    <p class="card-text text-muted">
+                        Stay updated with real-time crop prices and market trends. Make informed decisions and maximize your farm profits.
+                    </p>
+                    <a href="#" class="btn btn-success btn-sm">View Details</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container py-5">
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="row g-0 align-items-center">
+            
+                <!-- Left Image -->
+                <div class="col-md-5">
+                    <img src="{{ url_for('static', filename='clouds.avif') }}" class="img-fluid rounded-start" alt="Weather Update">
+                </div>
+
+                <!-- Right Content -->
+                <div class="col-md-7">
+                    <div class="card-body">
+                    <h5 class="card-title fw-bold">Weather Forecast</h5>
+                    <p class="card-text text-muted">
+                        Get accurate weather updates for your region. Plan your farming activities with confidence and stay ahead of sudden changes.
+                    </p>
+                    <a href="#" class="btn btn-info btn-sm">View Forecast</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container py-5">
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="row g-0 align-items-center">
+            
+                <!-- Left Image -->
+                <div class="col-md-5">
+                    <img src="{{ url_for('static', filename='Ai.avif') }}" class="img-fluid rounded-start" alt="FarmHub AI">
+                </div>
+
+                <!-- Right Content -->
+                <div class="col-md-7">
+                    <div class="card-body">
+                    <h5 class="card-title fw-bold">FarmHub AI Assistant</h5>
+                    <p class="card-text text-muted">
+                        Get smart AI-powered advice for your crops and farms. Detect pests, optimize planting schedules, and improve yields with actionable insights.
+                    </p>
+                    <a href="#" class="btn btn-success btn-sm">Try AI Assistant</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div class="container py-5">
+        <div class="card shadow border-0 overflow-hidden">
+            <div class="row g-0">
+
+                <!-- Left Image -->
+                <div class="col-md-5">
+                    <img src="{{ url_for('static', filename='messaging.jpg') }}" 
+                        class="img-fluid h-100 w-100 object-fit-cover" 
+                        alt="FarmHub AI">
+                </div>
+
+                <!-- Right Form -->
+                <div class="col-md-7 d-flex align-items-center">                    
+                    <div class="card-body p-4 w-100">
+
+                        <form method="post">
+                            <h3>
+                                Message Farmhub Support
+                                <small class="text-muted">for any inquiries...</small>
+                                <br>
+                            </h3>
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Message</label>
+                                <textarea class="form-control" rows="4" required></textarea>
+                            </div>
+
+                            <button class="btn btn-primary w-100">Submit</button>
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <footer class="bg-dark text-light pt-5 pb-3">
+        <div class="container">
+            <div class="row">
+
+            <!-- About / Links -->
+            <div class="col-md-4 mb-3">
+                <h6 class="fw-bold">FarmHub</h6>
+                <p class="small text-light">
+                Smart farming tools, AI assistance, and community-driven growth for modern farmers.
+                </p>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <h6 class="fw-bold">Quick Links</h6>
+                <ul class="list-unstyled">
+                <li><a href="#" class="text-light text-decoration-none">About Us</a></li>
+                <li><a href="#" class="text-light text-decoration-none">FAQ</a></li>
+                <li><a href="#" class="text-light text-decoration-none">Contact</a></li>
+                <li><a href="#" class="text-light text-decoration-none">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <h6 class="fw-bold">Follow Us</h6>
+                <div class="d-flex gap-3">
+                <a href="#" class="text-light fs-5"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="text-light fs-5"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="text-light fs-5"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+
+            </div>
+
+            <hr class="bg-light">
+
+            <div class="text-center small text-light">
+            &copy; 2026 FarmHub. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+<script>
+    const hero = document.getElementById("hero");
+
+    const images = [
+        "{{ url_for('static', filename='back.jpg') }}",
+        "{{ url_for('static', filename='cow.jpg') }}",
+        "{{ url_for('static', filename='coffeeplant.jpg') }}",
+        "{{ url_for('static', filename='plants.jpg') }}",
+        "{{ url_for('static', filename='M.avif') }}",
+    ];
+
+    let index = 0;
+
+    function changeBackground() {
+        hero.style.backgroundImage = `url('${images[index]}')`;
+        index = (index + 1) % images.length;
+    }
+
+    // start slideshow
+    changeBackground();
+    setInterval(changeBackground, 2000);
+
+    const li = document.querySelectorAll('.nav-link');
+
+    function changecolor(){
+        li.forEach((item) => {
+            item.addEventListener('mouseover', function() {
+                li.forEach((i) => i.classList.remove('active'));
+                this.style.color = "magenta";
+                this.classList.add('active');
+            });
+        });
+    }
+
+    changecolor();
+
+    const btn = document.querySelector('.btn-primary');
+
+    btn.addEventListener("mouseover", ()=>{
+        btn.style.backgroundColor = "green";
+    })
+
+</script>
+{% endblock %}
