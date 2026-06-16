@@ -1,0 +1,371 @@
+{% extends "dash_base.html" %}
+
+{% block title %}
+communities 
+{% endblock %}
+
+{% block content %}
+<div id="toast-container"></div>
+<div class="topbar">
+        
+    <!-- SEARCH -->
+
+    <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search markets, crops, communities">
+    </div>
+
+    <!-- WEATHER -->
+
+    <div class="weather-box">
+        <i class="bi bi-sunrise"></i>
+        <div>
+            <div class="weather-temp"></div>
+            <small><b>{{current_user.location}}</b></small>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+
+    <div class="notification position-relative">
+        <i class="bi bi-bell"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            99+
+            <span class="visually-hidden">unread messages</span>
+        </span>
+    </div>
+
+    <!-- User Profile Button -->
+    <div class="user-profile d-flex align-items-center" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#userModal">
+        <div class="avatar rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" style="width:40px; height:40px;">
+            {{ current_user.username[0] }}
+        </div>
+        <div class="user-info ms-2">
+            <strong>{{ current_user.username }}</strong>
+            <small>{{ current_user.role }}</small>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalLabel">{{ current_user.username }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-unstyled mb-0">
+                <li><a href="{{url_for('profile')}}" class="text-decoration-none d-block py-2"><i class="fa-solid fa-circle-user"></i>Profile</a></li>
+                <li><a href="{{url_for('settings')}}" class="text-decoration-none d-block py-2"><i class="fa-solid fa-gear fa-1x"></i>Settings</a></li>
+                <li><hr></li>
+                <li><a href="{{url_for('auth.logout')}}" class="text-decoration-none d-block py-2 text-danger"><i class="bi bi-box-arrow-right"></i>Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <button onclick="toggleDarkMode()" class="btn btn-secondary">
+            <i class="bi bi-moon-fill"></i>
+        </button><br><br>
+
+<div class="container my-4">
+    <!-- Top statements + Create Community button -->
+    <div class="statements mb-3">
+        <div>
+            <p>Connect with other farmers</p>
+            <p>Track discussions and growth</p>
+            <p>Stay updated on new trends</p>
+        </div>
+        <div>
+            <button class="btn btn-primary btn-create" data-bs-toggle="modal" data-bs-target="#createCommunityModal">
+                +Create Community
+            </button>       
+        </div>
+    </div>
+    <!-- Create Community Modal -->
+    <div class="modal fade" id="createCommunityModal" tabindex="-1" aria-labelledby="createCommunityLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createCommunityLabel">Create Community</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body">
+                    <form id="communityForm">
+
+                        <!-- Community Name -->
+                        <div class="mb-3">
+                            <label class="form-label">Community Name</label>
+                            <input type="text" class="form-control" id="communityName" placeholder="Enter community name" required>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="communityDescription" rows="3" placeholder="Enter description" required></textarea>
+                        </div>
+
+                        <!-- WhatsApp Link -->
+                        <div class="mb-3">
+                            <label class="form-label">WhatsApp Link</label>
+                            <input type="url" class="form-control" id="communityWhatsapp" placeholder="Enter WhatsApp group link">
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="submit" form="communityForm" class="btn btn-primary">
+                        Add Community
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Row with 3 stat cards -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Total Members</h6>
+            <div class="stat-number">12,345</div>
+            <div class="stat-change">+15.3% this month</div>
+        </div>
+        </div>
+        <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Active Discussions</h6>
+            <div class="stat-number">342</div>
+            <div class="stat-change">+8.7% this month</div>
+        </div>
+        </div>
+        <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Monthly Growth</h6>
+            <div class="stat-number">+845</div>
+            <div class="stat-change">+12.1% this month</div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Row with search box -->
+    <div class="row g-3">
+        <div class="col-12">
+        <div id="search-box" class="d-flex">
+            <input type="text" id="search-input" class="form-control me-2" placeholder="Search communities...">            <button id="search-btn" class="btn btn-primary">Search</button>
+        </div>
+        </div>
+    </div>
+
+    <!-- Search Results Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Search Results</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body">
+                    <div id="search-results" class="row g-3">
+                        <!-- Results will be injected here -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container my-4">
+    <h5 class="mb-3">Existing Communities</h5>
+
+    <div class="row g-3" id="communities-container">
+        {% for community in all_communities %}
+        <div class="col-md-4 col-sm-6 col-12">
+            <div class="community-card">
+                <div class="community-title">{{ community.name }}</div>
+                <div class="community-info"><b>{{ community.description }}</b></div>
+                <div class="community-info"><small>Id: </small>{{ community.id }}</div>
+                <div class="community-info">
+                    <a href="{{ community.whatsapp_link }}" target="_blank" class="btn btn-success btn-sm mt-2">Join WhatsApp</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+    }
+
+    // ----- TOAST SYSTEM -----
+    function showToast(message, type="success") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast-msg ${type}`;
+        toast.innerText = message;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ----- RENDER COMMUNITIES -----
+    function renderCommunities(communities) {
+        const container = document.getElementById("communities-container"); 
+        communities.forEach(c => {
+            const div = document.createElement("div");
+            div.className = "col-md-4 col-sm-6 col-12";
+            div.innerHTML = `
+                <div class="community-card">
+                    <div class="community-title">${c.name}</div>
+                    <div class="community-info">${c.description}</div>
+                    ${c.whatsapp_link ? `<a href="${c.whatsapp_link}" target="_blank" class="btn btn-success btn-sm mt-2">Join WhatsApp</a>` : ""}
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // ----- RENDER SEARCH RESULTS -----
+    function renderSearchResults(communities) {
+        const container = document.getElementById("search-results");
+        container.innerHTML = "";
+
+        if (communities.length === 0) {
+            container.innerHTML = "<p>No results found</p>";
+            return;
+        }
+
+        communities.forEach(c => {
+            const div = document.createElement("div");
+            div.className = "col-md-6";
+
+            div.innerHTML = `
+                <div class="community-card">
+                    <div class="community-title">${c.name}</div>
+                    <div class="community-info">${c.description}</div>
+                    <!-- Join WhatsApp button -->
+                    ${c.whatsapp_link ? `<a href="${c.whatsapp_link}" target="_blank" class="btn btn-success btn-sm mt-2">Join WhatsApp</a>` : ""}
+                </div>
+            `;
+
+            container.appendChild(div);
+        });
+    }
+
+    // ----- FORM SUBMIT -----
+    document.getElementById("communityForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const name = document.getElementById("communityName").value.trim();
+        const description = document.getElementById("communityDescription").value.trim();
+        const whatsapp = document.getElementById("communityWhatsapp").value.trim();
+
+        // WhatsApp validation (optional)
+        if (whatsapp && !whatsapp.startsWith("https://chat.whatsapp.com/")) {
+            showToast("Please enter a valid WhatsApp group link", "error");
+            return;
+        }
+
+        try {
+            const response = await fetch("/forms/community", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                credentials: "include",
+                body: JSON.stringify({
+                    name: name,
+                    description: description,
+                    whatsapp_link: whatsapp || null
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showToast(data.message || "Community created!", "success");
+                const modal = bootstrap.Modal.getInstance(document.getElementById('createCommunityModal'));
+                modal.hide();
+                document.getElementById("communityForm").reset();
+                if(data.community){
+                    renderCommunities([data.community]);
+                }
+            } else {
+                showToast(data.error || "Something went wrong", "error");
+            }
+
+        } catch (err) {
+            console.error("Error:", err);
+            showToast("Server error. Try again.", "error");
+        }
+    });
+
+    // ----- SEARCH -----
+    const searchInput = document.getElementById("search-input");
+    const searchBtn = document.getElementById("search-btn");
+
+    async function performSearch() {
+        const query = searchInput.value.trim();
+        if (!query) {
+            showToast("Enter something to search", "error");
+            return;
+        }
+        try {
+            const res = await fetch(`/forms/search?q=${encodeURIComponent(query)}`);
+            const data = await res.json();
+            renderSearchResults(data);
+            const modal = new bootstrap.Modal(document.getElementById('searchModal'));
+            modal.show();
+        } catch (err) {
+            console.error(err);
+            showToast("Search failed", "error");
+        }
+    }
+
+    searchBtn.addEventListener("click", performSearch);
+    searchInput.addEventListener("keypress", (e) => { if(e.key === "Enter") performSearch(); });
+
+    // ----- SIDEBAR TOGGLE -----
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("content");
+    const toggleBtn = document.getElementById("toggleBtn");
+    toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        content.classList.toggle("expanded");
+    });
+
+    // ----- WEATHER -----
+    document.addEventListener("DOMContentLoaded", () => {
+        const tempDiv = document.querySelector(".weather-temp");
+        const location = "{{ current_user.location }}"; 
+        if(location) {
+            fetch(`${window.location.origin}/api/weather?location=${encodeURIComponent(location)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.temperature && data.description) {
+                    tempDiv.textContent = `${data.temperature}°C • ${data.description}`;
+                } else {
+                    tempDiv.textContent = "N/A";
+                }
+            })
+            .catch(err => { console.error(err); tempDiv.textContent = "N/A"; });
+        } else {
+            tempDiv.textContent = "N/A";
+        }
+    });
+</script>
+
+{% endblock %}
