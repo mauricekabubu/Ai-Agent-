@@ -1,0 +1,397 @@
+{% extends "dash_base.html" %}
+
+{% block title %}
+inbox
+{% endblock %}
+
+{% block content %}
+<!-- TOPBAR -->
+<div class="topbar">
+
+    <!-- SEARCH -->
+    <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search markets, crops, communities">
+    </div>
+
+    <!-- WEATHER -->
+    <div class="weather-box">
+        <i class="bi bi-sunrise"></i>
+        <div>
+            <div class="weather-temp"></div>
+            <small><b>{{current_user.location}}</b></small>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div class="notification position-relative">
+        <i class="bi bi-bell"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            99+
+            <span class="visually-hidden">unread messages</span>
+        </span>
+    </div>
+
+    <!-- User Profile Button -->
+    <div class="user-profile d-flex align-items-center" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#userModal">
+        <div class="avatar rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" style="width:40px; height:40px;">
+            {{ current_user.username[0] }}
+        </div>
+        <div class="user-info ms-2">
+            <strong>{{ current_user.username }}</strong>
+            <small>{{ current_user.role }}</small>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalLabel">{{ current_user.username }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-unstyled mb-0">
+                <li><a href="{{url_for('profile')}}" class="text-decoration-none d-block py-2"><i class="fa-solid fa-circle-user"></i>Profile</a></li>
+                <li><a href="{{url_for('settings')}}" class="text-decoration-none d-block py-2"><i class="fa-solid fa-gear fa-1x"></i>Settings</a></li>
+                <li><hr></li>
+                <li><a href="{{url_for('auth.logout')}}" class="text-decoration-none d-block py-2 text-danger"><i class="bi bi-box-arrow-right"></i>Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <button onclick="toggleDarkMode()" class="btn btn-secondary">
+            <i class="bi bi-moon-fill"></i>
+        </button>
+        <br><br>
+
+<div class="container my-4">
+    <!-- Top statements + Create Notification button -->
+    <div class="statements mb-3">
+        <div>
+            <p>Stay updated with the latest alerts</p>
+            <p>Manage your notifications efficiently</p>
+            <p>Never miss important updates</p>
+        </div>
+            <button class="btn btn-primary btn-create" data-bs-toggle="modal" data-bs-target="#createCommunityModal">
+                    +Create Post
+            </button>
+        </div>
+
+    <!-- Create Post Modal -->
+    <!-- Create Post Modal -->
+    <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createPostModalLabel">Create New Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createPostForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="postTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="postTitle" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="postContent" class="form-label">Content</label>
+                            <textarea class="form-control" id="postContent" rows="4" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="postImage" class="form-label">Upload Image</label>
+                            <input type="file" class="form-control" id="postImage" accept="image/*">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Post</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row with 3 notification stat cards -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h6>Total Notifications</h6>
+                <div class="stat-number">1,256</div>
+                <div class="stat-change">+20% this month</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h6>Read Notifications</h6>
+                <div class="stat-number">845</div>
+                <div class="stat-change">+15% this month</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <h6>Unread Notifications</h6>
+                <div class="stat-number">411</div>
+                <div class="stat-change">+30% this month</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-12">
+        <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-primary">Total Notifications</button>
+        <button class="btn btn-outline-success">Read Notifications</button>
+        <button class="btn btn-outline-danger">Unread Notifications</button>
+        <button class="btn btn-outline-warning">Important</button>
+        <button class="btn btn-outline-info">Mentions</button>
+        </div>
+    </div>
+</div>
+<div class="container my-4">
+    <h5 class="mb-3">Recent Messages & Notifications</h5>
+    <div class="card" style="height: 500px; overflow-y: auto; border-radius: 15px; border: 1px solid #dee2e6;">
+        <div class="list-group list-group-flush">
+        
+            <!-- Message 1 -->
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                <div class="fw-bold">New order received</div>
+                <small class="text-muted">5 minutes ago</small>
+                <div>Green Valley Farms placed an order for Organic Tomatoes</div>
+                </div>
+                <span class="badge bg-primary rounded-pill align-self-start">New</span>
+            </div>
+
+            <!-- Message 2 -->
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                <div class="fw-bold">Payment received</div>
+                <small class="text-muted">15 minutes ago</small>
+                <div>Payment of $245 has been confirmed for order #ORD-1234</div>
+                </div>
+                <span class="badge bg-primary rounded-pill align-self-start">New</span>
+            </div>
+
+            <!-- Message 3 -->
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                <div class="fw-bold">New message</div>
+                <small class="text-muted">1 hour ago</small>
+                <div>Farm Co-op 23 sent you a message about bulk ordering</div>
+                </div>
+                <span class="badge bg-primary rounded-pill align-self-start">New</span>
+            </div>
+
+            <!-- Message 4 -->
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                <div class="fw-bold">New community member</div>
+                <small class="text-muted">2 hours ago</small>
+                <div>Sarah Wilson joined "Organic Farming Community"</div>
+                </div>
+                <span class="badge bg-success rounded-pill align-self-start">Low inventory alert</span>
+            </div>
+
+            <!-- Message 5 -->
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                <div class="fw-bold">Low inventory alert</div>
+                <small class="text-muted">3 hours ago</small>
+                <div>Your stock for "Brown Rice" is running low (15 units left)</div>
+                </div>
+                <span class="badge bg-warning rounded-pill align-self-start">Alert</span>
+            </div>
+
+            <!-- Message 6 -->
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                <div class="fw-bold">Order delivered</div>
+                <small class="text-muted">5 hours ago</small>
+                <div>Order #ORD-1230 has been successfully delivered</div>
+                </div>
+                <span class="badge bg-success rounded-pill align-self-start">Delivered</span>
+            </div>
+
+            <!-- Message 7 -->
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                <div class="fw-bold">Market trend update</div>
+                <small class="text-muted">1 day ago</small>
+                <div>Organic tomato prices increased by 12% this week</div>
+                </div>
+                <span class="badge bg-info rounded-pill align-self-start">Update</span>
+            </div>
+
+            <!-- Message 8 -->
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                <div class="fw-bold">Order pending</div>
+                <small class="text-muted">1 day ago</small>
+                <div>Order #ORD-1232 is waiting for your confirmation</div>
+                </div>
+                <span class="badge bg-warning rounded-pill align-self-start">Pending</span>
+            </div>
+
+            <!-- Message 9 -->
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                <div class="fw-bold">Message from buyer</div>
+                <small class="text-muted">2 days ago</small>
+                <div>Mike Johnson asked about delivery schedule</div>
+                </div>
+                <span class="badge bg-primary rounded-pill align-self-start">New</span>
+            </div>
+
+            <!-- Message 10 -->
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                <div class="fw-bold">Payment processed</div>
+                <small class="text-muted">2 days ago</small>
+                <div>Weekly payout of $1,245 has been transferred to your account</div>
+                </div>
+                <span class="badge bg-success rounded-pill align-self-start">Paid</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Toast Container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div id="postToast" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="postToastBody">
+                <!-- Message will appear here -->
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+    }
+
+    // Sidebar toggle
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("content");
+    const toggleBtn = document.getElementById("toggleBtn");
+
+    toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        content.classList.toggle("expanded");
+    });
+
+    function showToast(message, type="primary") {
+        const toastEl = document.getElementById("postToast");
+        const toastBody = document.getElementById("postToastBody");
+
+        // Update message
+        toastBody.textContent = message;
+
+        // Update color
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+
+        // Show toast
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
+
+
+    
+    //Weather Api call
+    document.addEventListener("DOMContentLoaded", () => {
+        const tempDiv = document.querySelector(".weather-temp");
+        const location = "{{ current_user.location }}"; // user location from Flask
+
+        if(location) {
+            fetch(`${window.location.origin}/api/weather?location=${encodeURIComponent(location)}`)                    .then(res => res.json())
+            .then(data => {
+                if (data.temperature && data.description) {
+                    tempDiv.textContent = `${data.temperature}°C • ${data.description}`;
+                } else {
+                    tempDiv.textContent = "N/A";
+                }
+            })
+            .catch(err => {
+                console.error("Weather fetch error:", err);
+                tempDiv.textContent = "N/A";
+            });
+        } else {
+            tempDiv.textContent = "N/A";
+        }
+    });
+
+    //post modal
+    document.querySelector(".btn-create").addEventListener("click", () => {
+        const createPostModal = new bootstrap.Modal(document.getElementById('createPostModal'));
+        createPostModal.show();
+    });
+
+    //Form submission
+    document.getElementById("createPostForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById("postTitle").value.trim();
+        const content = document.getElementById("postContent").value.trim();
+        const imageFile = document.getElementById("postImage").files[0];
+
+        if (!title || !content) {
+            showToast("Title and Content are required!", "danger");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("content", content);
+        if (imageFile) formData.append("image", imageFile);
+
+        try {
+            const response = await fetch("/forms/post", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showToast(data.message, "success");
+                document.getElementById("createPostForm").reset();
+                const modalEl = document.getElementById("createPostModal");
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+            } else {
+                showToast(data.error || "Something went wrong!", "danger");
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("Network error. Try again.", "danger");
+        }
+    });
+    if (response.ok) {
+    showToast(data.message, "success");
+
+    // CREATE POST UI
+    const postContainer = document.querySelector(".list-group");
+
+    const newPost = document.createElement("div");
+    newPost.className = "list-group-item";
+
+    newPost.innerHTML = `
+        <div class="fw-bold">${title}</div>
+        <small class="text-muted">Just now</small>
+        <div>${content}</div>
+        ${data.image ? `<img src="/static/uploads/${data.image}" style="max-width:100%; margin-top:10px; border-radius:10px;">` : ""}
+    `;
+
+    postContainer.prepend(newPost);
+
+    document.getElementById("createPostForm").reset();
+
+    const modalEl = document.getElementById("createPostModal");
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    modal.hide();
+}
+</script>
+{% endblock %}
