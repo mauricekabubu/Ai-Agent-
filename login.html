@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}
+login page
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+
+    <div class="login-card">
+
+        <div class="logo">
+            <h2>🌱 FarmHub</h2>
+            <p class="text-muted">Smart Agriculture Platform</p>
+        </div>
+
+        <form method="POST" action="{{url_for('auth.login')}}">
+            <!-- Username -->
+            <div class="form-group">
+                <label>Username</label>
+            <div class="input-group">
+
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                <i class="fa fa-user"></i>
+                </span>
+            </div>
+            <input type="text" name="username" class="form-control" placeholder="Enter your username" required>
+            </div>
+            </div>
+            <!-- Password -->
+            <div class="form-group">
+
+            <label>Password</label>
+            <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-lock"></i></span>
+            </div>
+            <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+            </div>
+            </div>
+
+            <div class="d-flex justify-content-between links">
+                <a href="{{url_for('auth.forgot_password')}}">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-farmhub btn-block mt-3">
+                Login
+            </button>
+
+            <div class="footer-text">
+                <p>
+                    Don't have an account?
+                    <a href="{{url_for('auth.register')}}">Sign Up</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+
+    body{
+    margin:0;
+    height:100vh;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg,#2e7d32,#66bb6a);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.login-container{
+    width:420px;
+}
+
+.login-card{
+    background:white;
+    padding:40px;
+    border-radius:18px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.2);
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo h2{
+    color:#2e7d32;
+    font-weight:bold;
+}
+
+.form-control{
+    border-radius:10px;
+    padding:12px;
+}
+
+.input-group-text{
+    background:#e8f5e9;
+    border:none;
+}
+
+.btn-farmhub{
+    background:#2e7d32;
+    border:none;
+    border-radius:10px;
+    padding:12px;
+    font-weight:600;
+}
+
+.btn-farmhub:hover{
+    background:#1b5e20;
+}
+
+.links{
+    margin-top:15px;
+    font-size:14px;
+}
+
+.links a{
+    color:#2e7d32;
+    font-weight:500;
+}
+
+.footer-text{
+    text-align:center;
+    margin-top:20px;
+    font-size:14px;
+}
+</style>
+{% endblock %}
