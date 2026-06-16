@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}
+Contact Us
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-6 fw-bold mb-4 text-center">Contact Us</h1>
+    <div class="container py-5">
+        <div class="card shadow border-0 overflow-hidden">
+            <div class="row g-0">
+
+                <!-- Left Image -->
+                <div class="col-md-5">
+                    <img src="{{ url_for('static', filename='messaging.jpg') }}" 
+                        class="img-fluid h-100 w-100 object-fit-cover" 
+                        alt="FarmHub AI">
+                </div>
+
+                <!-- Right Form -->
+                <div class="col-md-7 d-flex align-items-center">                    
+                    <div class="card-body p-4 w-100">
+
+                        <form method="post">
+                            <h3>
+                                Message Farmhub Support
+                                <small class="text-muted">for any inquiries...</small>
+                                <br>
+                            </h3>
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Message</label>
+                                <textarea class="form-control" rows="4" required></textarea>
+                            </div>
+
+                            <button class="btn btn-primary w-100">Submit</button>
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container mt-5">
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card border-success mb-3" style="max-width: 25rem; height: 100%;">
+                    <div class="card-header bg-transparent border-success">Reach Us</div>
+                        <div class="card-body text-success">
+                            <h5 class="display-6 card-title" style="color: crimson;">User- Farmer Support</h5>
+                            <br>
+                            <p class="display-7 card-text" style="color: black;">WhatsApp: <a href="+254 716540107" style="text-decoration: none;">+254716540107</a></p>
+                            <p class="display-7 card-text" style="color: black;">Support: <a href="mailto:support@farmhub.com" style="text-decoration: none;">support@farmhub.com</a></p>
+                            <p class="display-7 card-text" style="color: black;">Media: <a href="mailto:market@farmhub.org" style="text-decoration: none;">Market@farmhub.org</a></p>
+                            <p class="display-7 card-text" style="color: black;">Media&press: <a href="mailto:media@farmhub.org" style="text-decoration: none;">media@farmhub.org</a></p>
+                        </div>
+                    <div class="card-footer bg-transparent border-success" style="color: magenta;">For any inquiries, contact us</div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-success mb-3" style="max-width: 25rem; height: 100%;">
+                    <div class="card-header bg-transparent border-success">Safe and Fast</div>
+                        <div class="card-body text-success">
+                            <h5 class="display-6 card-title" style="color: crimson;">Safe and Fast</h5>
+                            <p class="display-7 card-text" style="color: black;">WhatsApp: <a href="+254 716 540107" style="text-decoration: none;">+254716540107</a></p>                                                        
+                            <p class="display-7 card-text" style="color: black;">Email: <a href="mailto:info@farmhub.com" style="text-decoration: none;">info@farmhub.com</a></p>
+                            <br><br>
+                            <p class="display-7 card-text" style="color: blue;">Quick client delivery and response to queries. We value your time and strive to provide efficient support for all your farming needs. powered by FarmHub.</p>
+                        </div>
+                    <div class="card-footer bg-transparent border-success" style="color: magenta;">Ensure your experience is safe and fast</div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-success mb-3" style="max-width: 25rem; height: 100%;">
+                    <div class="card-header bg-transparent border-success">Socials</div>
+                        <div class="card-body text-success">
+                            <h5 class="display-6 card-title" style="color: darkgreen;">Social Media</h5>
+                            <p class="card-text">Follow us on social media for updates and farming tips.</p>
+                            <p class="card-text"><i class="fa-brands fa-facebook"></i> Facebook: FarmHub</p>
+                            <p class="card-text"><i class="fa-brands fa-twitter"></i> Twitter: @FarmHub</p>
+                            <p class="card-text"><i class="fa-brands fa-instagram"></i> Instagram: @FarmHub</p>                            
+                        </div>
+                        <button type="button" class="btn btn-primary" data-toggle="button" style="width: 60%;background-color: green; border: none; color: white; margin-left: 20%;border-radius: 20px;">Chat via whatsapp<i class="fa-brands fa-whatsapp"></i></button>                        <br>
+                        <div class="card-footer bg-transparent border-success" style="color: magenta;">View all social links</div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <br>
+    <footer class="bg-dark text-light pt-5 pb-3">
+        <div class="container">
+            <div class="row">
+
+            <!-- About / Links -->
+            <div class="col-md-4 mb-3">
+                <h6 class="fw-bold">FarmHub</h6>
+                <p class="small text-light">
+                Smart farming tools, AI assistance, and community-driven growth for modern farmers.
+                </p>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <h6 class="fw-bold">Quick Links</h6>
+                <ul class="list-unstyled">
+                <li><a href="#" class="text-light text-decoration-none">About Us</a></li>
+                <li><a href="#" class="text-light text-decoration-none">FAQ</a></li>
+                <li><a href="#" class="text-light text-decoration-none">Contact</a></li>
+                <li><a href="#" class="text-light text-decoration-none">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <h6 class="fw-bold">Follow Us</h6>
+                <div class="d-flex gap-3">
+                <a href="#" class="text-light fs-5"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="text-light fs-5"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="text-light fs-5"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+
+            </div>
+
+            <hr class="bg-light">
+
+            <div class="text-center small text-light">
+            &copy; 2026 FarmHub. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+{% endblock %}
