@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh; background: #f4f6f9;">
+
+    <div class="card shadow-lg border-0 rounded-4" style="width: 100%; max-width: 400px;">
+        <div class="card-body p-4">
+
+            <!-- Title -->
+            <h4 class="text-center mb-3 fw-bold">Forgot Password</h4>
+            <p class="text-center text-muted small mb-4">
+                Enter your email and we’ll send you a reset link.
+            </p>
+
+            <!-- Form -->
+            <form method="POST" action="{{ url_for('auth.forgot_password') }}">
+                
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label">Email address</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        class="form-control rounded-3"
+                        placeholder="Enter your email"
+                        required
+                    >
+                </div>
+
+                <!-- Submit -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary rounded-3">
+                        Send Reset Link
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Divider -->
+            <hr class="my-4">
+
+            <!-- Back to Login -->
+            <div class="text-center">
+                <a href="{{ url_for('auth.login') }}" class="text-decoration-none small">
+                    ← Back to Login
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
