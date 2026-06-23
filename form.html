@@ -1,0 +1,64 @@
+{% extends "base.html" %} {% block title %} form page {% endblock %} {% block
+content %}
+<div class="container mt-5">
+  <h2>Add Farm</h2>
+    <form action="{{ url_for('auth.form') }}" method="POST">
+        <!-- Farm Name -->
+        <div class="mb-3">
+            <label for="farm_name" class="form-label">Farm Name</label>
+            <input
+                type="text"
+                class="form-control"
+                id="farm_name"
+                name="farm_name"
+                placeholder="Enter farm name"
+                required
+            />
+        </div>
+
+        <!-- Farm Size -->
+        <div class="mb-3">
+        <label for="farm_size" class="form-label"
+            >Farm Size (in acres/hectares)</label
+        >
+        <input
+            type="number"
+            step="0.01"
+            class="form-control"
+            id="farm_size"
+            name="farm_size"
+            placeholder="Enter farm size"
+            required
+        />
+        </div>
+
+        <!-- Crops Grown -->
+        <div class="mb-3">
+        <label for="crops_grown" class="form-label">Crops Grown</label>
+        <textarea
+            class="form-control"
+            id="crops_grown"
+            name="crops_grown"
+            rows="3"
+            placeholder="Enter crops grown"
+            required
+        ></textarea>
+        </div>
+
+        <!-- Type of Farmer -->
+        <div class="mb-3">
+        <label for="type_farmer" class="form-label">Type of Farmer</label>
+        <input
+            type="text"
+            class="form-control"
+            id="type_farmer"
+            name="type_farmer"
+            placeholder="e.g., Smallholder, Commercial"
+            required>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Add Farm</button>
+    </form>
+</div>
+{% endblock %}
