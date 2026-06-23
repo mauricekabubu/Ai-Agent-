@@ -1,0 +1,176 @@
+{% extends "dash_base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<!-- Toast Container -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <div id="toastContainer"></div>
+</div>
+
+
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Card 1: Profile Photo with Upload -->
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-success mb-3">Profile Photo</h5>
+                    <div class="position-relative mb-3" style="width: 120px; height: 120px; margin: 0 auto;">
+                        <img id="profileImage" src="{{ url_for('static', filename='uploads/' + current_user.profile_img) if current_user.profile_img else url_for('static', filename='Ai.avif') }}" 
+                             alt="Profile Photo" 
+                             class="rounded-circle border border-success w-100 h-100 object-fit-cover">
+                        <label for="uploadInput" class="position-absolute bottom-0 end-0 bg-success rounded-circle p-1 text-white" style="cursor: pointer;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
+                                <path d="M.5 9.9v2a.5.5 0 0 0 .5.5h14a.5.5 0 0 0 .5-.5v-2h-1v2H1v-2h-.5z"/>
+                                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 1 1-.708.708L8.5 2.707V10.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                            </svg>
+                        </label>
+                    </div>
+                    <input type="file" id="uploadInput" name="profile_img" class="d-none" accept="image/*">
+                    <p class="text-muted small">Click the icon to upload a new profile photo</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Farmer Details with Icons -->
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-success mb-4">Farmer Details</h5>
+                    <div class="row row-cols-1 row-cols-sm-2 g-3">
+                        <!-- Name -->
+                        <div class="col d-flex align-items-center gap-2">
+                            <i class="bi bi-person-fill text-success" style="font-size: 1rem;"></i>
+                            <div>
+                                <p class="mb-0 text-muted small">Name</p>
+                                <p class="mb-0 fw-medium">{{current_user.full_names}}</p>
+                            </div>
+                        </div>
+                        <!-- Username -->
+                        <div class="col d-flex align-items-center gap-2">
+                            <i class="bi bi-person-badge-fill text-success" style="font-size: 1rem;"></i>
+                            <div>
+                                <p class="mb-0 text-muted small">Username</p>
+                                <p class="mb-0 fw-medium">{{current_user.username}}</p>
+                            </div>
+                        </div>
+                        <!-- Location -->
+                        <div class="col d-flex align-items-center gap-2">
+                            <i class="bi bi-geo-alt-fill text-success" style="font-size: 1rem;"></i>
+                            <div>
+                                <p class="mb-0 text-muted small">Location</p>
+                                <p class="mb-0 fw-medium">{{current_user.location}}</p>
+                            </div>
+                        </div>
+                        <!-- Role -->
+                        <div class="col d-flex align-items-center gap-2">
+                            <i class="bi bi-briefcase-fill text-success" style="font-size: 1rem;"></i>
+                            <div>
+                                <p class="mb-0 text-muted small">Role</p>
+                                <p class="mb-0 fw-medium">{{current_user.role}}</p>
+                            </div>
+                        </div>
+                        <!-- Email -->
+                        <div class="col d-flex align-items-center gap-2">
+                            <i class="bi bi-envelope-fill text-success" style="font-size: 1rem;"></i>
+                            <div>
+                                <p class="mb-0 text-muted small">Email</p>
+                                <p class="mb-0 fw-medium">{{current_user.email}}</p>
+                            </div>
+                        </div>
+                        <!-- Phone -->
+                        <div class="col d-flex align-items-center gap-2">
+                            <i class="bi bi-telephone-fill text-success" style="font-size: 1rem;"></i>
+                            <div>
+                                <p class="mb-0 text-muted small">Phone</p>
+                                <p class="mb-0 fw-medium">{{current_user.phone}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success btn-sm mt-3">Edit Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("content");
+    const toggleBtn = document.getElementById("toggleBtn");
+
+    toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        content.classList.toggle("expanded");
+    });
+    
+    const uploadInput = document.getElementById('uploadInput');
+    const profileImage = document.getElementById('profileImage');
+
+    uploadInput.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        profileImage.src = URL.createObjectURL(file);
+
+        const formData = new FormData();
+        formData.append("profile_img", file);
+
+        try {
+            const response = await fetch("{{ url_for('auth.upload') }}", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showToast("Image uploaded successfully ", "success");
+            } else {
+                showToast(data.error || "Upload failed", "error");
+            }
+
+        } catch (error) {
+            console.error("Upload failed:", error);
+            showToast("Something went wrong", "error");
+        }
+    });
+
+    function showToast(message, type = "success") {
+        const toastId = "toast-" + Date.now();
+
+        const colors = {
+            success: "bg-success text-white",
+            error: "bg-danger text-white",
+            warning: "bg-warning text-dark",
+            info: "bg-info text-white"
+        };
+
+        const toastHTML = `
+            <div id="${toastId}" class="toast align-items-center ${colors[type]} border-0 mb-2" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        `;
+
+        const container = document.getElementById("toastContainer");
+        container.insertAdjacentHTML("beforeend", toastHTML);
+
+        const toastEl = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+
+        toast.show();
+
+        // Remove after hidden
+        toastEl.addEventListener("hidden.bs.toast", () => {
+            toastEl.remove();
+        });
+    }
+</script>
+{% endblock %}
