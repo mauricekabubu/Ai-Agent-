@@ -1,0 +1,243 @@
+{% extends "dash_base.html" %}
+
+{% block title %}
+Farmhub Ai
+{% endblock %}
+
+{% block content %}
+    <!-- TOPBAR -->
+
+    <div class="topbar">
+
+        <!-- SEARCH -->
+
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Search markets, crops, communities">
+        </div>
+
+        <!-- WEATHER -->
+
+        <div class="weather-box">
+            <i class="bi bi-sunrise"></i>
+            <div>
+                <div class="weather-temp"></div>
+                <small><b>{{current_user.location}}</b></small>
+            </div>
+        </div>
+
+        <!-- NOTIFICATION -->
+
+        <div class="notification position-relative">
+            <i class="bi bi-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                99+
+                <span class="visually-hidden">unread messages</span>
+            </span>
+        </div>
+
+        <!-- User Profile Button -->
+        <div class="user-profile d-flex align-items-center" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#userModal">
+            <div class="avatar rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" style="width:40px; height:40px;">
+                {{ current_user.username[0] }}
+            </div>
+            <div class="user-info ms-2">
+                <strong>{{ current_user.username }}</strong>
+                <small>{{ current_user.role }}</small>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">{{ current_user.username }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-unstyled mb-0">
+                    <li><a href="{{url_for('profile')}}" class="text-decoration-none d-block py-2"><i class="fa-solid fa-circle-user"></i>Profile</a></li>
+                    <li><a href="{{url_for('settings')}}" class="text-decoration-none d-block py-2"><i class="fa-solid fa-gear fa-1x"></i>Settings</a></li>
+                    <li><hr></li>
+                    <li><a href="{{url_for('auth.logout')}}" class="text-decoration-none d-block py-2 text-danger"><i class="bi bi-box-arrow-right"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <button onclick="toggleDarkMode()" class="btn btn-secondary">
+            <i class="bi bi-moon-fill"></i>
+        </button><br><br>
+
+<div class="chat-container">
+    <!-- Sidebar -->
+    <div class="chat-sidebar">
+        <h5>Farmhub AI History</h5>
+        <div id="history-sidebar">
+            <div class="history-item active" data-chat-id="1">Chat 1</div>
+            <div class="history-item" data-chat-id="2">Chat 2</div>
+            <div class="history-item" data-chat-id="3">Chat 3</div>
+        </div>
+    </div>
+
+    <!-- Chat area -->
+    <div class="chat-main">
+        <h5>Live Chat</h5>
+        <div id="chat-box">
+            <div class="message ai-message">
+                Hello! How can I assist you today?
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+    }
+
+    const userId = "{{ current_user.id }}";
+    const chatBox = document.getElementById('chat-box');
+    const input = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    const historySidebar = document.getElementById('history-sidebar');
+
+    // Load user-specific history from localStorage
+    let chatHistory = JSON.parse(localStorage.getItem(`farmhubChatHistory_${userId}`) || '[]');
+
+    // Render sidebar and chat from saved history
+    function renderHistorySidebar() {
+        historySidebar.innerHTML = '';
+        chatHistory.forEach(chat => {
+            const item = document.createElement('div');
+            item.classList.add('history-item');
+            item.dataset.chatId = chat.id;
+            item.textContent = `Chat ${chat.id}`;
+            item.addEventListener('click', () => loadChat(chat.id));
+            historySidebar.appendChild(item);
+        });
+
+        // Highlight last chat if exists
+        if (chatHistory.length > 0) {
+            const lastChatId = chatHistory[chatHistory.length - 1].id;
+            loadChat(lastChatId);
+        }
+
+        // Scroll sidebar to bottom
+        historySidebar.scrollTop = historySidebar.scrollHeight;
+    }
+
+    function addMessageToChatBox(message) {
+        const div = document.createElement('div');
+        div.classList.add('message', message.role === 'ai' ? 'ai-message' : 'user-message');
+
+        if (message.role === 'ai') {
+            div.innerHTML = message.text; // render AI messages as HTML
+        } else {
+            div.textContent = message.text;
+        }
+
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function saveToHistory(userMsg, aiMsg) {
+        const chatId = chatHistory.length ? chatHistory[chatHistory.length - 1].id + 1 : 1;
+        const chat = { id: chatId, messages: [userMsg, aiMsg] };
+        chatHistory.push(chat);
+
+        // Save user-specific history
+        localStorage.setItem(`farmhubChatHistory_${userId}`, JSON.stringify(chatHistory));
+
+        // Update sidebar
+        renderHistorySidebar();
+    }
+
+    function loadChat(chatId) {
+        const chat = chatHistory.find(c => c.id == chatId);
+        if (!chat) return;
+
+        chatBox.innerHTML = '';
+        chat.messages.forEach(msg => addMessageToChatBox(msg));
+
+        // Highlight active chat
+        document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+        const activeEl = document.querySelector(`.history-item[data-chat-id='${chatId}']`);
+        if (activeEl) activeEl.classList.add('active');
+    }
+
+    function sendMessage() {
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        const userMsg = { role: 'user', text: msg };
+        addMessageToChatBox(userMsg);
+        input.value = '';
+
+        const loadingMsg = { role: 'ai', text: 'Typing...' };
+        addMessageToChatBox(loadingMsg);
+
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: msg })
+        })
+        .then(res => res.json())
+        .then(data => {
+            chatBox.lastChild.remove(); // remove "Typing..."
+            const aiMsg = { role: 'ai', text: data.reply || "No response" };
+            addMessageToChatBox(aiMsg);
+            saveToHistory(userMsg, aiMsg);
+        })
+        .catch(err => {
+            chatBox.lastChild.textContent = "Error getting response";
+            console.error(err);
+        });
+    }
+
+    // Event listeners
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') sendBtn.click(); });
+
+    // Initial render
+    renderHistorySidebar();
+
+    // Weather API
+    document.addEventListener("DOMContentLoaded", () => {
+        const tempDiv = document.querySelector(".weather-temp");
+        const location = "{{ current_user.location }}";
+        if(location) {
+            fetch(`${window.location.origin}/api/weather?location=${encodeURIComponent(location)}`)
+            .then(res => res.json())
+            .then(data => {
+                tempDiv.textContent = data.temperature ? `${data.temperature}°C • ${data.description}` : "N/A";
+            })
+            .catch(() => tempDiv.textContent = "N/A");
+        } else tempDiv.textContent = "N/A";
+    });
+    // Toast notifications
+    const toastElList = document.querySelectorAll('.toast');
+
+    toastElList.forEach(function(toastEl) {
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    });
+
+    // Sidebar toggle
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("content");
+    const toggleBtn = document.getElementById("toggleBtn");
+
+    toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        content.classList.toggle("expanded");
+    });
+</script>
+{% endblock %}
