@@ -1,0 +1,548 @@
+{% extends "dash_base.html" %}
+
+{% block title %}
+dashboard
+{% endblock %}
+
+{% block content %}   
+<div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
+    <!-- TOPBAR -->
+    <div class="topbar">
+
+        <!-- SEARCH -->
+
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Search markets, crops, communities">
+        </div>
+
+        <!-- WEATHER -->
+
+        <div class="weather-box">
+            <i class="bi bi-sunrise"></i>
+            <div>
+                <div class="weather-temp"></div>
+                <small><b>{{current_user.location}}</b></small>
+            </div>
+        </div>
+
+        <!-- NOTIFICATION -->
+
+        <div class="notification position-relative">
+            <i class="bi bi-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                99+
+                <span class="visually-hidden">unread messages</span>
+            </span>
+        </div>
+        
+
+        <!-- User Profile Button -->
+        <div class="user-profile d-flex align-items-center" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#userModal">
+            <div class="avatar rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" style="width:40px; height:40px;">
+                {{ current_user.username[0] }}
+            </div>
+            <div class="user-info ms-2">
+                <strong>{{ current_user.username }}</strong>
+                <small>{{ current_user.role }}</small>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">{{ current_user.username }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="{{url_for('profile')}}" class="text-decoration-none d-block py-2"><i class="fa-solid fa-circle-user"></i>Profile</a></li>
+                        <li><a href="{{url_for('settings')}}" class="text-decoration-none d-block py-2"><i class="fa-solid fa-gear fa-1x"></i>Settings</a></li>
+                        <li><hr></li>
+                        <li><a href="{{url_for('auth.logout')}}" class="text-decoration-none d-block py-2 text-danger"><i class="bi bi-box-arrow-right"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+        <button onclick="toggleDarkMode()" class="btn btn-secondary">
+            <i class="bi bi-moon-fill"></i>
+        </button>
+
+        <!-- Main Content -->
+        <h2>FarmHub Dashboard</h2>
+        <p>Welcome {{current_user.username}} to your Dashboard.</p>
+
+        
+
+        <!-- Boxes -->
+        <div class="container mt-4">
+            <div class="row g-4">
+
+                <!-- Total Sales -->
+                <div class="col-md-3">
+                    <div class="card dashboard-card p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-muted mb-1">Total Sales</p>
+                                <h4>$12,540</h4>
+                                <small class="text-success">+8% this month</small>
+                            </div>
+
+                            <div class="icon-box bg-sales">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Listings -->
+                <div class="col-md-3">
+                    <div class="card dashboard-card p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+                                <p class="text-muted mb-1">Active Listings</p>
+                                <h4>320</h4>
+                                <small class="text-muted">products available</small>
+                            </div>
+
+                            <div class="icon-box bg-listing">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Orders -->
+                <div class="col-md-3">
+                    <div class="card dashboard-card p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+                                <p class="text-muted mb-1">Pending Orders</p>
+                                <h4>48</h4>
+                                <small class="text-warning">awaiting delivery</small>
+                            </div>
+
+                            <div class="icon-box bg-orders">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Community Members -->
+                <div class="col-md-3">
+                    <div class="card dashboard-card p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+                                <p class="text-muted mb-1">Community Members</p>
+                                <h4>12,340</h4>
+                                <small class="text-success">+15% vs last week</small>
+                            </div>
+
+                            <div class="icon-box bg-members">
+                                <i class="bi bi-people"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Details Boxes -->
+        <div class="container mt-4">
+            <div class="row g-4">
+
+                <!-- Weather Predictions -->
+                <div class="col-lg-12">
+                    <div class="card shadow-sm border-0 p-4 rounded-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">Weather Forecast & Weekly Predictions</h5>
+                            <a href="#" class="text-decoration-none small text-primary">
+                                View Details →
+                            </a>
+                        </div>
+
+                        <canvas id="weatherChart" height="250"></canvas>
+
+                    </div>
+                </div>
+
+                <!-- Market Price Trends -->
+                <div class="col-lg-12">
+                    <div class="card shadow-sm border-0 p-4 rounded-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">Market Price Trends</h5>
+                            <a href="#" class="text-decoration-none small text-primary">
+                                View Details →
+                            </a>
+                        </div>
+
+                        <canvas id="marketPriceChart" height="250"></canvas>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+        <div class="container mt-4">
+            <div class="row g-4">
+
+                <!-- Recent Transactions (Bigger) -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 rounded-4">
+
+                        <!-- Header -->
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center border-0">
+                            <h5 class="mb-0">
+                                <i class="bi bi-basket text-success me-2"></i> Recent Transactions
+                            </h5>
+                            <a href="#" class="small text-decoration-none fw-semibold">View All</a>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="card-body">
+
+                            <!-- Transaction Item -->
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle fs-4 text-success me-3"></i>
+                                    <div>
+                                        <div class="fw-semibold">John Mwangi</div>
+                                        <small class="text-muted">Maize • 01</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-semibold text-success">KES 4,500</div>
+                                    <span class="badge bg-success">Completed</span>
+                                </div>
+                            </div>
+
+                            <!-- Transaction Item -->
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle fs-4 text-warning me-3"></i>
+                                    <div>
+                                        <div class="fw-semibold">Mary Wanjiru</div>
+                                        <small class="text-muted">Tomatoes • 02</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-semibold text-warning">KES 2,100</div>
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                </div>
+                            </div>
+
+                            <!-- Transaction Item -->
+                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle fs-4 text-success me-3"></i>
+                                    <div>
+                                        <div class="fw-semibold">Peter Kariuki</div>
+                                        <small class="text-muted">Potatoes • 03</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-semibold text-success">KES 3,700</div>
+                                    <span class="badge bg-success">Completed</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Messages (Smaller) -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0 rounded-4">
+
+                        <!-- Header -->
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center border-0">
+                            <h5 class="mb-0">
+                                <i class="bi bi-chat-dots text-success me-2"></i> Recent Messages
+                            </h5>
+                            <a href="#" class="small text-decoration-none fw-semibold">View All</a>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="card-body">
+
+                            <div class="p-3 mb-3 bg-light rounded-3 d-flex align-items-start">
+                                <i class="bi bi-cloud-rain text-primary me-2"></i>
+                                <div>
+                                    <div class="fw-semibold">Weather Alert</div>
+                                    <small class="text-muted">Rain expected tomorrow</small>
+                                </div>
+                            </div>
+
+                            <div class="p-3 mb-3 bg-light rounded-3 d-flex align-items-start">
+                                <i class="bi bi-truck text-warning me-2"></i>
+                                <div>
+                                    <div class="fw-semibold">Delivery Update</div>
+                                    <small class="text-muted">Truck delayed</small>
+                                </div>
+                            </div>
+
+                            <div class="p-3 mb-3 bg-light rounded-3 d-flex align-items-start">
+                                <i class="bi bi-bug text-danger me-2"></i>
+                                <div>
+                                    <div class="fw-semibold">Pest Alert</div>
+                                    <small class="text-muted">Check tomato crops</small>
+                                </div>
+                            </div>
+
+                            <div class="p-3 bg-light rounded-3 d-flex align-items-start">
+                                <i class="bi bi-cash-coin text-success me-2"></i>
+                                <div>
+                                    <div class="fw-semibold">Payment</div>
+                                    <small class="text-muted">Farmer paid successfully</small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            function toggleDarkMode() {
+                document.body.classList.toggle("dark-mode");
+            }
+
+            function showAlert(message, type = 'info', delay = 5000) {
+                const toastContainer = document.getElementById('toastContainer');
+
+                // Create toast element
+                const toastEl = document.createElement('div');
+                toastEl.className = `toast align-items-center text-bg-${type} border-0`;
+                toastEl.role = 'alert';
+                toastEl.ariaLive = 'assertive';
+                toastEl.ariaAtomic = 'true';
+                toastEl.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+
+                toastContainer.appendChild(toastEl);
+
+                // Initialize and show toast
+                const toast = new bootstrap.Toast(toastEl, { delay: delay });
+                toast.show();
+
+                // Remove from DOM after hidden
+                toastEl.addEventListener('hidden.bs.toast', () => {
+                    toastEl.remove();
+                });
+            }
+
+            // Toast notifications
+            const toastElList = document.querySelectorAll('.toast');
+
+            toastElList.forEach(function(toastEl) {
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            });
+
+            // Sidebar toggle
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+            const toggleBtn = document.getElementById("toggleBtn");
+
+            toggleBtn.addEventListener("click", () => {
+                sidebar.classList.toggle("collapsed");
+                content.classList.toggle("expanded");
+            });
+            
+                
+            
+            function drawWeatherChart(labels, temps, rain) {
+                const ctx = document.getElementById('weatherChart').getContext('2d');
+
+                // Destroy old chart if exists (prevents bugs)
+                if (weatherChart) {
+                    weatherChart.destroy();
+                }
+
+                weatherChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Temperature (°C)',
+                                data: temps,
+                                borderColor: 'blue',
+                                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            },
+                            {
+                                label: 'Rain (mm)',
+                                data: rain,
+                                borderColor: 'green',
+                                backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            async function checkWeatherAlert() {
+                const location = "{{ current_user.location }}";
+
+                try {
+                    const res = await fetch(`/api/forecast?location=${encodeURIComponent(location)}`);
+                    const data = await res.json();
+
+                    if (!Array.isArray(data) || data.length === 0) return;
+
+                    // Get tomorrow's forecast
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    const tomorrowStr = tomorrow.toISOString().split('T')[0]; // YYYY-MM-DD
+
+                    const tomorrowForecast = data.find(item => item.time.startsWith(tomorrowStr));
+
+                    if (!tomorrowForecast) return;
+
+                    let message = '';
+                    let type = 'info'; // default alert type
+
+                    // Determine alert based on weather
+                    if (tomorrowForecast.rain && tomorrowForecast.rain > 10) {
+                        message = `🌧️ Heavy rain expected tomorrow: ${tomorrowForecast.rain} mm. Stay safe!`;
+                        type = 'danger';
+                    } else if (tomorrowForecast.rain && tomorrowForecast.rain > 0) {
+                        message = `🌦️ Light rain tomorrow: ${tomorrowForecast.rain} mm. Carry an umbrella!`;
+                        type = 'warning';
+                    } else if (tomorrowForecast.sunny) {
+                        message = `☀️ Sunny day expected tomorrow. Enjoy the sunshine!`;
+                        type = 'success';
+                    } else {
+                        message = `ℹ️ Weather looks normal tomorrow.`;
+                    }
+
+                    showAlert(message, type);
+
+                } catch (err) {
+                    console.error("Weather alert error:", err);
+                }
+            }
+
+            //Weather Api calling
+            document.addEventListener("DOMContentLoaded", () => {
+                const tempDiv = document.querySelector(".weather-temp");
+                const location = "{{ current_user.location }}"; // user location from Flask
+
+                if(location) {
+                    fetch(`${window.location.origin}/api/weather?location=${encodeURIComponent(location)}`)                    .then(res => res.json())
+                    .then(data => {
+                        if (data.temperature && data.description) {
+                            tempDiv.textContent = `${data.temperature}°C • ${data.description}`;
+                        } else {
+                            tempDiv.textContent = "N/A";
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Weather fetch error:", err);
+                        tempDiv.textContent = "N/A";
+                    });
+                } else {
+                    tempDiv.textContent = "N/A";
+                }
+            });
+
+            // Market price chart
+            const ctx = document.getElementById('marketPriceChart');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Tomato Price (KES)',
+                        data: [45, 50, 52, 48, 55, 60, 62],
+                        tension: 0.4
+                    }]
+                }
+            });
+
+            let weatherChart;
+            
+
+            async function loadWeatherChart() {
+                const location = "{{ current_user.location }}";
+                
+
+                try {
+                    const res = await fetch(`/api/forecast?location=${encodeURIComponent(location)}`);
+                    const data = await res.json();
+
+                    if (!Array.isArray(data)) {
+                        console.error("Invalid weather data:", data);
+                        return;
+                    }
+
+                    // Format labels (time)
+                    const labels = data.map(item => {
+                        const date = new Date(item.time);
+                        return date.toLocaleDateString('en-KE', { weekday: 'short' });
+                    });
+
+                    const temps = data.map(item => item.temp);
+                    const rain = data.map(item => item.rain);
+
+                    drawWeatherChart(labels, temps,rain);
+
+                } catch (err) {
+                    console.error("Weather chart error:", err);
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                    loadWeatherChart();
+                });
+
+            document.addEventListener("DOMContentLoaded", () => {
+                checkWeatherAlert();
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
