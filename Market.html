@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}
+Market
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid py-5 position-relative text-white">
+
+        <!-- Background Image -->
+        <div class="position-absolute top-0 start-0 w-100 h-100">
+        </div>
+
+        <!-- Dark Overlay -->
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-75"
+            style="z-index: 2;">
+        </div>
+
+        <!-- Content -->
+        <div class="container position-relative text-center" style="z-index: 3;">
+
+            <div class="p-5 rounded-4">
+
+                <h1 class="fw-bold display-5 mb-3">
+                    Explore Our Market Products
+                </h1>
+
+                <p class="mb-4 fs-5">
+                    Discover high-quality agricultural products and buy directly 
+                    from trusted farmers across regions.
+                </p>
+
+                <!-- Modern Search Bar -->
+                <form class="row justify-content-center">
+                    <div class="col-md-7">
+                        <div class="input-group input-group-lg shadow">
+
+                            <input type="search"
+                                class="form-control border-0 rounded-start-pill px-4"
+                                placeholder="Search seeds, livestock, fertilizers..."
+                                aria-label="Search">
+
+                            <button class="btn btn-success rounded-end-pill px-4 fw-semibold"
+                                    type="submit">
+                                <i class="fas fa-search me-2"></i> Search
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+    <br>
+    <!-- Product Cards -->
+    <div class="container py-5">
+        <div class="row g-4 justify-content-center">
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card product-card shadow-sm border-0">
+
+                    <!-- Image Wrapper -->
+                    <div class="position-relative overflow-hidden">
+
+                        <img src="{{ url_for('static', filename='green.jpg') }}"
+                            class="card-img-top"
+                            style="height: 250px; object-fit: cover;"
+                            alt="Green Fields">
+
+                        <!-- Hover Overlay -->
+                        <div class="quick-view-overlay d-flex justify-content-center align-items-center">
+                            <a href="#" class="btn btn-light fw-semibold">
+                                Quick View
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column">
+
+                        <h5 class="card-title">Seeds</h5>
+
+                        <p class="card-text text-muted flex-grow-1">
+                            Find a wide variety of high-quality seeds for all types of crops,
+                            sourced directly from trusted farmers and suppliers.
+                        </p>
+
+                        <!-- Bottom Section -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+
+                            <span class="fw-bold text-success">KES 1,200</span>
+
+                            <button class="btn btn-outline-success rounded-circle">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card2 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card product-card shadow-sm border-0">
+
+                    <!-- Image Wrapper -->
+                    <div class="position-relative overflow-hidden">
+
+                        <img src="{{ url_for('static', filename='fruits.jpg') }}"
+                            class="card-img-top"
+                            style="height: 250px; object-fit: cover;"
+                            alt="Green Fields">
+
+                        <!-- Hover Overlay -->
+                        <div class="quick-view-overlay d-flex justify-content-center align-items-center">
+                            <a href="#" class="btn btn-light fw-semibold">
+                                Quick View
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column">
+
+                        <h5 class="card-title">Fruits</h5>
+
+                        <p class="card-text text-muted flex-grow-1">
+                            Find a wide variety of high-quality fruits for all types of crops,
+                            sourced directly from trusted farmers and suppliers.
+                        </p>
+
+                        <!-- Bottom Section -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+
+                            <span class="fw-bold text-success">KES 1,500</span>
+
+                            <button class="btn btn-outline-success rounded-circle">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card product-card shadow-sm border-0">
+
+                    <!-- Image Wrapper -->
+                    <div class="position-relative overflow-hidden">
+
+                        <img src="{{ url_for('static', filename='coffee1.jpg') }}"
+                            class="card-img-top"
+                            style="height: 250px; object-fit: cover;"
+                            alt="Green Fields">
+
+                        <!-- Hover Overlay -->
+                        <div class="quick-view-overlay d-flex justify-content-center align-items-center">
+                            <a href="#" class="btn btn-light fw-semibold">
+                                Quick View
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column">
+
+                        <h5 class="card-title">Coffee Seeds</h5>
+
+                        <p class="card-text text-muted flex-grow-1">
+                            Find a wide variety of high-quality coffee seeds for all types of crops,
+                            sourced directly from trusted farmers and suppliers.
+                        </p>
+
+                        <!-- Bottom Section -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+
+                            <span class="fw-bold text-success">KES 3,200</span>
+
+                            <button class="btn btn-outline-success rounded-circle">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card product-card shadow-sm border-0">
+
+                    <!-- Image Wrapper -->
+                    <div class="position-relative overflow-hidden">
+
+                        <img src="{{ url_for('static', filename='tractor.jpg') }}"
+                            class="card-img-top"
+                            style="height: 250px; object-fit: cover;"
+                            alt="Green Fields">
+
+                        <!-- Hover Overlay -->
+                        <div class="quick-view-overlay d-flex justify-content-center align-items-center">
+                            <a href="#" class="btn btn-light fw-semibold">
+                                Quick View
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column">
+
+                        <h5 class="card-title">Tractor</h5>
+
+                        <p class="card-text text-muted flex-grow-1">
+                            Find a wide variety of high-quality tractors for all types of farming operations,
+                            sourced directly from trusted farmers and suppliers.
+                        </p>
+
+                        <!-- Bottom Section -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+
+                            <span class="fw-bold text-success">KES 500,000</span>
+
+                            <button class="btn btn-outline-success rounded-circle">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    
+<script>
+
+    const position = document.querySelector('.position-absolute');
+
+    const images = [
+        "{{url_for('static', filename='green.jpg')}}",
+        "{{url_for('static', filename='coffeeplant.jpg')}}",
+        "{{url_for('static', filename='cow.jpg')}}"]
+    
+    let index=0;
+
+    function changeimage(){
+        position.style.backgroundImage = `url(${images[index]})`;
+        position.style.backgroundSize = "cover";
+        position.style.backgroundPosition = "center";
+        index = (index + 1) % images.length;
+    }
+
+    changeimage();
+    setInterval(changeimage, 2000)
+
+</script>
+{% endblock %}
