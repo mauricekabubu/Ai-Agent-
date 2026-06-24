@@ -1,0 +1,422 @@
+body {
+    margin: 0;
+    padding-top: 70px;
+    background-color: whitesmoke;
+}
+
+.card {
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: white;
+    color: blue;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.btn-success {
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-weight: 700;
+}
+
+.btn-warning {
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-weight: 700;
+}
+
+.btn-info {
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-weight: 700;
+}
+
+.btn-success:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #ffc107;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.circle-img {
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+}
+
+.circle-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.feature-box {
+    border-radius: 15px;
+    background-color: black;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.feature-box:hover {
+    background-color: #e9f7ef;
+    transform: translateY(-5px);
+}
+
+.feature-card {
+    display: block;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    background: #e8f5e9;
+    transform: translateY(-8px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.08);
+}
+
+.circle-wrapper {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.circle-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.feature-card:hover .circle-wrapper img {
+    transform: scale(1.1);
+}
+
+
+/* Section background gradient */
+
+.feature-section {
+    background: whitesmoke;
+}
+
+
+/* Card Style */
+
+.feature-card {
+    display: block;
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    background: magenta;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* Glow border effect */
+
+.feature-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(45deg, #198754, #20c997);
+    --webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Circle Image */
+
+.circle-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: transform 0.4s ease;
+}
+
+.circle-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.feature-card:hover .circle-wrapper img {
+    transform: scale(1.15);
+}
+
+.stat-box h2 {
+    font-size: 2.5rem;
+    color: #198754;
+    transition: transform 0.3s;
+}
+
+.stat-box:hover h2 {
+    transform: scale(1.1);
+}
+
+.stat-box {
+    background: gold;
+    transition: all 0.3s ease;
+}
+
+.stat-box:hover {
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+.faq-item summary {
+    cursor: pointer;
+    font-size: 1.1rem;
+    list-style: none;
+    outline: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-item[open] summary::after {
+    content: "▲";
+    float: right;
+    font-size: 0.9rem;
+}
+
+.faq-item summary::after {
+    content: "▼";
+    float: right;
+    font-size: 0.9rem;
+}
+
+.faq-item p {
+    transition: all 0.3s ease;
+}
+
+.card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+    object-fit: cover;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+    object-fit: cover;
+    height: 100%;
+}
+
+.btn-info {
+    background-color: #0dcaf0;
+    /* Bootstrap info */
+    border: none;
+}
+
+footer a:hover {
+    color: #20c997;
+    /* subtle FarmHub green highlight */
+    text-decoration: underline;
+}
+
+footer {
+    font-size: 0.9rem;
+}
+
+.bi bi-facebook {
+    color: #3b5998;
+    transition: color 0.3s ease;
+}
+
+.bi bi-instagram {
+    color: #e4405f;
+    transition: color 0.3s ease;
+}
+
+.bi bi-twitter {
+    color: #1da1f2;
+    transition: color 0.3s ease;
+}
+
+.blog-card {
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease-in-out;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.blog-card {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.blog-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Quick View Overlay */
+
+.quick-view-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-card:hover .quick-view-overlay {
+    opacity: 1;
+}
+
+.market-card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.market-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-container img {
+    height: 220px;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.market-card:hover img {
+    transform: scale(1.05);
+}
+
+.price-tag {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: #198754;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.icon-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn button {
+    border: none;
+    background: white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Toast colors by category */
+
+.toast-success {
+    background-color: #28a745 !important;
+    /* Green */
+    color: white;
+}
+
+.toast-danger {
+    background-color: #dc3545 !important;
+    /* Red */
+    color: white;
+}
+
+.toast-info {
+    background-color: #0d6efd !important;
+    /* Blue */
+    color: white;
+}
+
+.toast-warning {
+    background-color: #ffc107 !important;
+    /* Yellow */
+    color: black;
+}
+
+
+/* Optional: add border radius and shadow for nicer look */
+
+.toast {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    margin-left: 300px;
+}
+
+.toast+.toast {
+    margin-top: 0.5rem;
+    align-items: center;
+}
