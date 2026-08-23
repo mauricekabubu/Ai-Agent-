@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Environment variables
+.env
+
+# Django
+db.sqlite3
+*.sqlite3
+media/
+staticfiles/
+
+# Logs
+*.log
+
+# IDEs / Editors
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Django migrations
+# Uncomment only if you intentionally don't want to track migrations
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Build / Distribution
+build/
+dist/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets / Certificates
+*.pem
+*.key
