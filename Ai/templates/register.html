@@ -1,0 +1,1031 @@
+{% extends "base.html" %}
+
+{% block title %}Atom AI · Create Your Assistant{% endblock %}
+
+{% block content %}
+<style>
+  /* ═══════════════════════════════════════════════════════════════
+     ATOM AI — ONBOARDING / SIGNUP FLOW
+     Multi-step wizard: Account → Business → Services → AI Personality
+     ═══════════════════════════════════════════════════════════════ */
+
+  :root{
+    --accent:#4F46E5; --accent-dark:#4338CA; --accent-light:#EEF2FF; --accent-soft:#C7D2FE;
+    --bg:#F7F8FA; --card:#FFFFFF; --border:#E5E7EB; --border-soft:#F3F4F6;
+    --text:#111827; --text-2:#4B5563; --text-3:#6B7280; --text-4:#9CA3AF;
+    --success:#16A34A; --success-light:#F0FDF4;
+    --warning:#F59E0B; --warning-bg:#FFFBEB;
+    --danger:#DC2626; --danger-light:#FEF2F2;
+    --info:#3B82F6; --info-bg:#EFF6FF;
+    --radius:12px; --radius-lg:16px; --radius-xl:20px;
+    --shadow-sm: 0 1px 2px rgba(16,24,40,.04), 0 2px 8px rgba(16,24,40,.05);
+    --shadow-lg: 0 20px 50px rgba(17,24,39,.10);
+    --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ─── Base ─── */
+  .onboarding-page *{box-sizing:border-box; margin:0; padding:0;}
+  .onboarding-page{
+    font-family:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent; overflow-x:hidden;
+    min-height:100vh;
+  }
+  .onboarding-page button{font-family:inherit; cursor:pointer; touch-action:manipulation;}
+  .onboarding-page input,.onboarding-page textarea,.onboarding-page select{font-family:inherit;}
+  .onboarding-page ::-webkit-scrollbar{width:6px; height:6px;}
+  .onboarding-page ::-webkit-scrollbar-thumb{background:var(--border); border-radius:8px;}
+  .onboarding-page :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:6px;}
+  .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0);}
+
+  /* ─── Progress Bar ─── */
+  .progress-wrap{padding:22px 24px 6px; max-width:920px; margin:0 auto;}
+  .progress-track{display:flex; align-items:flex-start; justify-content:space-between; position:relative;}
+  .progress-step{display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; position:relative; z-index:2;}
+  .progress-circle{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700; border:2px solid var(--border); color:var(--text-4); background:var(--card);
+    transition: all var(--transition);
+  }
+  .progress-step.active .progress-circle{border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 4px var(--accent-light);}
+  .progress-step.done .progress-circle{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .progress-label{font-size:12px; font-weight:600; color:var(--text-4); text-align:center;}
+  .progress-step.active .progress-label{color:var(--accent);}
+  .progress-step.done .progress-label{color:var(--text-2);}
+  .progress-line-bg{position:absolute; top:17px; left:0; right:0; height:2px; background:var(--border); z-index:1;}
+  .progress-line-fill{position:absolute; top:17px; left:0; height:2px; background:var(--accent); z-index:1; transition:width .35s ease; width:0%;}
+  #progressWrap{display:none;}
+  #progressWrap.show{display:block;}
+
+  /* ─── Layout ─── */
+  .split{display:grid; grid-template-columns: 1fr 1.15fr; min-height:calc(100vh - 90px); max-width:1180px; margin:0 auto; align-items:stretch;}
+  #splitLayout{display:none;}
+  #splitLayout.show{display:grid;}
+
+  .brand-panel{
+    background: var(--accent); color:#fff; border-radius:24px; margin:16px 12px 16px 24px;
+    display:flex; flex-direction:column; justify-content:center; padding:56px 48px; position:relative; overflow:hidden;
+  }
+  .brand-panel::before{
+    content:''; position:absolute; width:340px; height:340px; border-radius:50%; background:rgba(255,255,255,.06);
+    top:-120px; right:-100px;
+  }
+  .brand-panel::after{
+    content:''; position:absolute; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,.05);
+    bottom:-80px; left:-60px;
+  }
+  .brand-logo{display:flex; align-items:center; gap:10px; margin-bottom:44px; position:relative; z-index:1;}
+  .brand-logo .mark{width:34px; height:34px; border-radius:10px; background:rgba(255,255,255,.16); display:flex; align-items:center; justify-content:center;}
+  .brand-logo span{font-weight:700; font-size:16px; letter-spacing:-0.01em;}
+  .brand-illustration{margin-bottom:36px; position:relative; z-index:1;}
+  .brand-copy{position:relative; z-index:1;}
+  .brand-copy h2{font-size:26px; font-weight:700; letter-spacing:-0.02em; line-height:1.3; margin-bottom:12px;}
+  .brand-copy p{font-size:15px; color:rgba(255,255,255,.82); line-height:1.6; max-width:380px;}
+  .brand-foot{margin-top:44px; display:flex; gap:22px; position:relative; z-index:1;}
+  .brand-stat b{display:block; font-size:19px; font-weight:700;}
+  .brand-stat span{font-size:12px; color:rgba(255,255,255,.7);}
+
+  .form-panel{display:flex; flex-direction:column; padding:40px 40px 0; min-width:0;}
+  .form-scroll{flex:1; overflow-y:auto; padding-bottom:16px;}
+  .form-card{max-width:440px; margin:0 auto; width:100%;}
+  .form-head{margin-bottom:28px;}
+  .form-head h1{font-size:24px; font-weight:700; letter-spacing:-0.02em; margin-bottom:6px;}
+  .form-head p{font-size:14px; color:var(--text-3);}
+
+  .step-screen{display:none; animation: fadeUp .35s ease;}
+  .step-screen.active{display:block;}
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  /* skeleton loader */
+  .skeleton-wrap{display:none; max-width:440px; margin:0 auto;}
+  .skeleton-wrap.show{display:block;}
+  .sk-line{height:14px; border-radius:7px; background:linear-gradient(90deg, var(--border-soft) 25%, #e4e6ec 37%, var(--border-soft) 63%); background-size:400% 100%; animation:shimmer 1.3s ease infinite; margin-bottom:14px;}
+  @keyframes shimmer{0%{background-position:100% 50%;}100%{background-position:0 50%;}}
+  .sk-input{height:52px; border-radius:14px; background:linear-gradient(90deg, var(--border-soft) 25%, #e4e6ec 37%, var(--border-soft) 63%); background-size:400% 100%; animation:shimmer 1.3s ease infinite; margin-bottom:18px;}
+
+  /* ─── Floating Label Fields ─── */
+  .field-fl{position:relative; margin-bottom:18px;}
+  .field-fl input, .field-fl textarea{
+    width:100%; padding:19px 14px 9px; border:1.5px solid var(--border); border-radius:var(--radius);
+    font-size:14.5px; background:var(--card); color:var(--text); outline:none; transition:border-color .15s, box-shadow .15s;
+  }
+  .field-fl textarea{min-height:88px; resize:vertical; padding-top:22px;}
+  .field-fl label{
+    position:absolute; left:14px; top:17px; font-size:14.5px; color:var(--text-4); pointer-events:none;
+    transition: all .15s ease; background:transparent; max-width:calc(100% - 28px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .field-fl input:focus, .field-fl textarea:focus{border-color:var(--accent); box-shadow:0 0 0 3.5px var(--accent-light);}
+  .field-fl input:focus + label, .field-fl input:not(:placeholder-shown) + label,
+  .field-fl textarea:focus + label, .field-fl textarea:not(:placeholder-shown) + label{
+    top:7px; font-size:10.5px; font-weight:700; color:var(--accent); letter-spacing:.02em; text-transform:uppercase;
+  }
+  .field-fl.invalid input, .field-fl.invalid textarea{border-color:var(--danger); background:var(--danger-light);}
+  .field-fl.invalid label{color:var(--danger);}
+  .field-error{display:none; font-size:12px; color:var(--danger); margin-top:6px; padding-left:2px; align-items:center; gap:5px;}
+  .field-fl.invalid + .field-error, .field-error.show{display:flex;}
+  .field-hint{font-size:12px; color:var(--text-4); margin-top:6px; padding-left:2px;}
+  .field-with-icon input{padding-right:44px;}
+  .field-icon-btn{position:absolute; right:12px; top:15px; color:var(--text-4); width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:8px; background:none; border:none;}
+  .field-icon-btn:hover{color:var(--text-2); background:var(--bg);}
+
+  /* password strength */
+  .pw-strength{display:flex; gap:5px; margin:8px 0 4px;}
+  .pw-strength span{height:4px; flex:1; border-radius:3px; background:var(--border-soft); transition:background .2s;}
+  .pw-strength-label{font-size:12px; font-weight:600; color:var(--text-4);}
+
+  /* checkbox */
+  .check-row{display:flex; align-items:flex-start; gap:10px; margin:14px 0 6px;}
+  .check-box{width:20px; height:20px; border:1.5px solid var(--border); border-radius:6px; flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; transition:.15s; background:var(--card); cursor:pointer;}
+  .check-box.checked{background:var(--accent); border-color:var(--accent);}
+  .check-box i{font-size:11px; color:#fff; display:none;}
+  .check-box.checked i{display:block;}
+  .check-row label{font-size:13px; color:var(--text-3); line-height:1.5; cursor:pointer;}
+  .check-row a{color:var(--accent); font-weight:600; text-decoration:none;}
+  .check-row a:hover{text-decoration:underline;}
+
+  /* buttons */
+  .btn{padding:14px 20px; border-radius:var(--radius); font-size:14.5px; font-weight:700; border:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; transition:.15s; min-height:52px;}
+  .btn-primary{background:var(--accent); color:#fff; width:100%;}
+  .btn-primary:hover:not(:disabled){background:var(--accent-dark);}
+  .btn-primary:disabled{background:#C7CBD4; cursor:not-allowed;}
+  .btn-ghost{background:none; color:var(--text-3); border:1.5px solid var(--border);}
+  .btn-ghost:hover{background:var(--bg);}
+  .btn-link{background:none; color:var(--accent); font-weight:600; font-size:13.5px; padding:8px; border:none;}
+  .btn-link:hover{text-decoration:underline;}
+  .spinner{width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; animation:spin .6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .shake{animation:shake .4s;}
+  @keyframes shake{10%,90%{transform:translateX(-1px);}20%,80%{transform:translateX(2px);}30%,50%,70%{transform:translateX(-4px);}40%,60%{transform:translateX(4px);}}
+
+  /* action bar */
+  .action-bar{display:flex; gap:10px; max-width:440px; margin:26px auto 0; align-items:center;}
+  .action-bar .btn-primary{flex:1;}
+
+  /* ─── Business Hours ─── */
+  .hours-row{display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-soft);}
+  .hours-row:last-child{border-bottom:none;}
+  .hours-day{width:92px; flex-shrink:0; font-size:13.5px; font-weight:600;}
+  .hours-times{display:flex; align-items:center; gap:8px; flex:1;}
+  .hours-times input[type=time]{padding:9px 10px; border:1.5px solid var(--border); border-radius:10px; font-size:13px; background:var(--card); color:var(--text); width:112px;}
+  .hours-times input[type=time]:disabled{background:var(--bg); color:var(--text-4);}
+  .hours-sep{color:var(--text-4); font-size:12px;}
+  .closed-toggle{display:flex; align-items:center; gap:7px; margin-left:auto; flex-shrink:0;}
+  .closed-toggle span{font-size:12px; color:var(--text-3); font-weight:600;}
+  .mini-toggle{position:relative; width:36px; height:21px; border-radius:999px; background:var(--border); flex-shrink:0; transition:.15s; cursor:pointer;}
+  .mini-toggle::after{content:''; position:absolute; top:2px; left:2px; width:17px; height:17px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:.15s;}
+  .mini-toggle.on{background:var(--accent);}
+  .mini-toggle.on::after{transform:translateX(15px);}
+
+  /* ─── Service Cards ─── */
+  .service-card{border:1.5px solid var(--border); border-radius:var(--radius-lg); padding:18px; margin-bottom:16px; position:relative; background:var(--card);}
+  .service-card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .service-card-head span{font-size:12px; font-weight:700; color:var(--text-4); text-transform:uppercase; letter-spacing:.03em;}
+  .service-remove{color:var(--text-4); background:none; border:none; width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+  .service-remove:hover{color:var(--danger); background:var(--danger-light);}
+  .add-service-btn{width:100%; border:1.5px dashed var(--border); border-radius:var(--radius-lg); padding:16px; color:var(--accent); font-weight:700; font-size:13.5px; background:var(--accent-light); display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:8px; cursor:pointer;}
+  .add-service-btn:hover{background:#E0E4FF;}
+
+  /* ─── AI Personality ─── */
+  .field-label{font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.03em; margin-bottom:10px; display:block;}
+  .option-row{display:flex; flex-wrap:wrap; gap:9px; margin-bottom:22px;}
+  .option-pill{padding:10px 16px; border-radius:11px; border:1.5px solid var(--border); font-size:13.5px; font-weight:600; color:var(--text-3); background:var(--card); transition:.15s; cursor:pointer;}
+  .option-pill.selected{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .option-pill:hover:not(.selected){border-color:var(--accent-soft); color:var(--text-2);}
+  .toggle-row{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border:1.5px solid var(--border); border-radius:var(--radius); margin-bottom:12px; background:var(--card);}
+  .toggle-row .t-name{font-size:13.5px; font-weight:600;}
+  .toggle-row .t-desc{font-size:12px; color:var(--text-4); margin-top:2px;}
+  .big-toggle{position:relative; width:44px; height:26px; border-radius:999px; background:var(--border); flex-shrink:0; transition:.15s; cursor:pointer;}
+  .big-toggle::after{content:''; position:absolute; top:2px; left:2px; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:.15s;}
+  .big-toggle.on{background:var(--accent);}
+  .big-toggle.on::after{transform:translateX(18px);}
+
+  /* ─── Full Screens (welcome / finish) ─── */
+  .full-screen{display:none; min-height:100vh; align-items:center; justify-content:center; padding:40px 24px; text-align:center;}
+  .full-screen.active{display:flex; flex-direction:column;}
+  .full-inner{max-width:460px; width:100%; animation:fadeUp .5s ease;}
+  .fs-illustration{margin:0 auto 32px;}
+  .full-screen h1{font-size:28px; font-weight:700; letter-spacing:-0.02em; margin-bottom:10px;}
+  .full-screen p.sub{font-size:15px; color:var(--text-3); margin-bottom:32px; line-height:1.6;}
+  .full-screen .btn-primary{max-width:280px; margin:0 auto;}
+
+  .summary-card{background:var(--card); border:1.5px solid var(--border); border-radius:var(--radius-lg); padding:22px; margin-bottom:30px; text-align:left;}
+  .summary-row{display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border-soft);}
+  .summary-row:last-child{border-bottom:none;}
+  .summary-row .s-label{font-size:13px; color:var(--text-3);}
+  .summary-row .s-value{font-size:13.5px; font-weight:700;}
+
+  .check-circle{width:96px; height:96px; margin:0 auto 28px;}
+  .check-circle svg{width:100%; height:100%;}
+  .check-circle .circle-path{stroke-dasharray:300; stroke-dashoffset:300; animation:drawCircle .6s ease forwards;}
+  .check-circle .tick-path{stroke-dasharray:60; stroke-dashoffset:60; animation:drawTick .35s .55s ease forwards;}
+  @keyframes drawCircle{to{stroke-dashoffset:0;}}
+  @keyframes drawTick{to{stroke-dashoffset:0;}}
+
+  /* ─── Toasts ─── */
+  .toast-container{position:fixed; top:20px; right:20px; z-index:999; display:flex; flex-direction:column; gap:10px; max-width:340px;}
+  .toast{background:var(--text); color:#fff; padding:13px 16px; border-radius:12px; font-size:13.5px; font-weight:500; display:flex; align-items:center; gap:10px; box-shadow:var(--shadow-lg); animation:toastIn .25s ease;}
+  .toast.error{background:var(--danger);}
+  .toast.success{background:var(--success);}
+  @keyframes toastIn{from{opacity:0; transform:translateY(-8px);} to{opacity:1; transform:translateY(0);}}
+  .toast.hide{animation:toastOut .25s ease forwards;}
+  @keyframes toastOut{to{opacity:0; transform:translateX(20px);}}
+
+  /* ─── Responsive ─── */
+  @media (max-width: 980px){
+    .split{grid-template-columns:1fr; max-width:600px;}
+    .brand-panel{display:none;}
+    .form-panel{padding:28px 20px 0;}
+  }
+  @media (max-width: 640px){
+    .progress-wrap{padding:16px 16px 4px;}
+    .progress-label{display:none;}
+    .progress-circle{width:28px; height:28px; font-size:12px;}
+    .progress-line-bg, .progress-line-fill{top:14px;}
+    .form-head h1{font-size:20px;}
+    .action-bar{
+      position:sticky; bottom:0; background:linear-gradient(to top, var(--bg) 60%, transparent); padding:14px 0 calc(14px + env(safe-area-inset-bottom));
+      margin-top:20px; z-index:10;
+    }
+    .full-screen{padding:32px 20px;}
+    .field-fl input, .field-fl textarea{font-size:16px;} /* prevent iOS zoom */
+    .hours-times input[type=time]{width:96px; font-size:12.5px;}
+    .hours-day{width:74px; font-size:12.5px;}
+  }
+  @media (pointer:coarse){
+    .field-icon-btn{width:32px; height:32px;}
+    .option-pill{padding:11px 16px;}
+  }
+</style>
+<div class="onboarding-page">
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap" id="progressWrap" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1">
+  <div class="progress-track" id="progressTrack">
+    <div class="progress-line-bg"></div>
+    <div class="progress-line-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<!-- SPLIT LAYOUT (account / business / services / ai) -->
+<div class="split" id="splitLayout">
+  <aside class="brand-panel" aria-label="Brand information">
+    <div class="brand-logo">
+      <div class="mark"><i class="fa-solid fa-sparkles" aria-hidden="true"></i></div>
+      <span>Atom AI</span>
+    </div>
+    <div class="brand-illustration">
+      <svg width="220" height="160" viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI assistant illustration">
+        <rect x="34" y="24" width="152" height="98" rx="20" fill="rgba(255,255,255,.14)"/>
+        <rect x="52" y="44" width="116" height="14" rx="7" fill="rgba(255,255,255,.5)"/>
+        <rect x="52" y="66" width="80" height="14" rx="7" fill="rgba(255,255,255,.32)"/>
+        <rect x="52" y="88" width="96" height="14" rx="7" fill="rgba(255,255,255,.32)"/>
+        <circle cx="176" cy="30" r="10" fill="rgba(255,255,255,.6)"/>
+        <circle cx="40" cy="128" r="7" fill="rgba(255,255,255,.35)"/>
+        <circle cx="196" cy="118" r="5" fill="rgba(255,255,255,.4)"/>
+      </svg>
+    </div>
+    <div class="brand-copy">
+      <h2 id="brandHeading">Build your intelligent<br/>WhatsApp assistant in minutes.</h2>
+      <p id="brandSub">Atom AI answers questions, saves leads, and keeps your customers taken care of — even when you are offline.</p>
+    </div>
+    <div class="brand-foot">
+      <div class="brand-stat"><b>94%</b><span>AI success rate</span></div>
+      <div class="brand-stat"><b>6.4s</b><span>Avg. response time</span></div>
+      <div class="brand-stat"><b>11</b><span>Built-in tools</span></div>
+    </div>
+  </aside>
+
+  <div class="form-panel">
+    <div class="form-scroll">
+
+      <!-- SKELETON -->
+      <div class="skeleton-wrap" id="skeletonWrap">
+        <div class="sk-line" style="width:60%; height:22px; margin-bottom:20px;"></div>
+        <div class="sk-line" style="width:80%; margin-bottom:24px;"></div>
+        <div class="sk-input"></div>
+        <div class="sk-input"></div>
+        <div class="sk-input"></div>
+      </div>
+
+      <div class="form-card" id="formCard">
+        <form id="signupForm"
+              action="{{ url_for('auth.register') }}"
+              method="POST"
+              enctype="multipart/form-data"
+              autocomplete="off">
+
+            <!-- STEP: ACCOUNT -->
+            <section class="step-screen active" data-step="account" aria-label="Account creation">
+              <div class="form-head">
+                <h1>Create your Atom AI account</h1>
+                <p>Build your intelligent WhatsApp assistant in minutes.</p>
+              </div>
+
+              <div class="field-fl" id="f-username">
+                <input type="text" name="username" placeholder=" " id="in-username" autocomplete="username" required>
+                <label for="in-username">Username</label>
+              </div>
+              <div class="field-error" id="err-username"></div>
+
+              <div class="field-fl" id="f-email">
+                <input type="email" name="email" placeholder=" " id="in-email" autocomplete="email" required>
+                <label for="in-email">Email Address</label>
+              </div>
+              <div class="field-error" id="err-email"></div>
+
+              <div class="field-fl" id="f-phone">
+                <input type="tel" name="phone" placeholder=" " id="in-phone" autocomplete="tel" required>
+                <label for="in-phone">Phone Number</label>
+              </div>
+              <div class="field-error" id="err-phone"></div>
+
+              <div class="field-fl field-with-icon" id="f-password">
+                <input type="password" name="password" placeholder=" " id="in-password" autocomplete="new-password" required minlength="8">
+                <label for="in-password">Password</label>
+                <button type="button" class="field-icon-btn" id="togglePw" aria-label="Show password"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
+              </div>
+              <div class="field-error" id="err-password"></div>
+              <div class="pw-strength" id="pwStrength" aria-label="Password strength">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <div class="pw-strength-label" id="pwStrengthLabel" style="margin-bottom:16px;" aria-live="polite">&nbsp;</div>
+
+              <div class="field-fl field-with-icon" id="f-confirm">
+                <input type="password" name="password_confirm" placeholder=" " id="in-confirm" autocomplete="new-password" required>
+                <label for="in-confirm">Confirm Password</label>
+                <button type="button" class="field-icon-btn" id="toggleConfirm" aria-label="Show password"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
+              </div>
+              <div class="field-error" id="err-confirm"></div>
+
+              <div class="check-row">
+                <div class="check-box" id="agreeBox" role="checkbox" aria-checked="false" tabindex="0" aria-label="Agree to terms"><i class="fa-solid fa-check" aria-hidden="true"></i></div>
+                <label for="agreeBox" id="agreeLabel">I agree to the <a href="{{ url_for('auth.register') }}" target="_blank" rel="noopener">Terms of Service</a> and <a href="{{ url_for('agent.receive_messages') }}" target="_blank" rel="noopener">Privacy Policy</a>.</label>
+              </div>
+              <div class="field-error" id="err-agree"></div>
+
+              <div style="text-align:center; margin-top:18px;">
+                <a href="{{ url_for('auth.login') }}" class="btn-link">Already have an account? Sign In</a>
+              </div>
+            </section>
+
+            <!-- STEP: BUSINESS -->
+            <section class="step-screen" data-step="business" aria-label="Business information">
+              <div class="form-head">
+                <h1>Tell us about your business</h1>
+                <p>This helps Atom AI represent you accurately.</p>
+              </div>
+
+              <div class="field-fl" id="f-bizname">
+                <input type="text" name="business_name" placeholder=" " id="in-bizname" required>
+                <label for="in-bizname">Business Name</label>
+              </div>
+              <div class="field-error" id="err-bizname"></div>
+
+              <div class="field-fl" id="f-bizdesc">
+                <textarea name="business_description" placeholder=" " id="in-bizdesc" required minlength="10"></textarea>
+                <label for="in-bizdesc">Business Description</label>
+              </div>
+              <div class="field-error" id="err-bizdesc"></div>
+
+              <div class="field-fl" id="f-bizemail">
+                <input type="email" name="business_email" placeholder=" " id="in-bizemail" required>
+                <label for="in-bizemail">Business Email</label>
+              </div>
+              <div class="field-error" id="err-bizemail"></div>
+
+              <div class="field-fl" id="f-bizphone">
+                <input type="tel" name="business_phone" placeholder=" " id="in-bizphone" required>
+                <label for="in-bizphone">Business Phone</label>
+              </div>
+              <div class="field-error" id="err-bizphone"></div>
+
+              <div class="field-fl" id="f-bizlocation">
+                <input type="text" name="business_location" placeholder=" " id="in-bizlocation" required>
+                <label for="in-bizlocation">Business Location</label>
+              </div>
+              <div class="field-error" id="err-bizlocation"></div>
+
+              <span class="field-label" style="margin-top:8px;">Business hours</span>
+              <div id="hoursTable"></div>
+              <input type="hidden" name="business_hours" id="businessHoursInput">
+              <div class="field-error" id="err-hours" name="business_hours"></div>
+            </section>
+
+            <!-- STEP: SERVICES -->
+            <section class="step-screen" data-step="services" aria-label="Services offered">
+              <div class="form-head">
+                <h1>What services do you offer?</h1>
+                <p>Atom AI will use these to answer pricing and service questions.</p>
+              </div>
+              <div id="servicesList"></div>
+              <button type="button" class="add-service-btn" id="addServiceBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add Another Service</button>
+              <div class="field-error" id="err-services"></div>
+            </section>
+
+            <!-- STEP: AI PERSONALITY -->
+            <section class="step-screen" data-step="ai" aria-label="AI personality settings">
+              <div class="form-head">
+                <h1>Give Atom AI a personality</h1>
+                <p>Configure how your assistant sounds and behaves.</p>
+              </div>
+
+              <div class="field-fl" id="f-greeting">
+                <textarea name="greeting_message" placeholder=" " id="in-greeting" required minlength="5"></textarea>
+                <label for="in-greeting">Greeting Message</label>
+              </div>
+              <div class="field-error" id="err-greeting"></div>
+
+              <div class="field-fl" id="f-away">
+                <textarea name="away_message" placeholder=" " id="in-away" required minlength="5"></textarea>
+                <label for="in-away">Away Message</label>
+              </div>
+              <div class="field-error" id="err-away"></div>
+
+              <span class="field-label">Tone</span>
+              <div class="option-row" id="toneRow" role="radiogroup" aria-label="AI tone">
+                <button type="button" class="option-pill selected" data-tone="Professional" role="radio" aria-checked="true">Professional</button>
+                <button type="button" class="option-pill" data-tone="Friendly" role="radio" aria-checked="false">Friendly</button>
+                <button type="button" class="option-pill" data-tone="Casual" role="radio" aria-checked="false">Casual</button>
+                <button type="button" class="option-pill" data-tone="Formal" role="radio" aria-checked="false">Formal</button>
+              </div>
+              <input type="hidden" name="tone" id="toneInput" value="Professional">
+
+              <span class="field-label">Response Length</span>
+              <div class="option-row" id="lengthRow" role="radiogroup" aria-label="Response length">
+                <button type="button" class="option-pill" data-length="Short" role="radio" aria-checked="false">Short</button>
+                <button type="button" class="option-pill selected" data-length="Balanced" role="radio" aria-checked="true">Balanced</button>
+                <button type="button" class="option-pill" data-length="Detailed" role="radio" aria-checked="false">Detailed</button>
+              </div>
+              <input type="hidden" name="response_length" id="lengthInput" value="Balanced">
+
+              <span class="field-label">Auto Reply</span>
+              <div class="toggle-row">
+                <div><div class="t-name">Enable auto reply</div><div class="t-desc">Atom AI responds automatically when you are unavailable.</div></div>
+                <div class="big-toggle on" id="autoReplyToggle" role="switch" aria-checked="true" tabindex="0"></div>
+              </div>
+              <input type="hidden" name="auto_reply" id="autoReplyInput" value="true">
+
+              <span class="field-label" style="margin-top:6px;">Notification Preferences</span>
+              <div class="toggle-row">
+                <div><div class="t-name">Email</div><div class="t-desc">Get a daily digest by email.</div></div>
+                <div class="big-toggle on" data-notif="email" role="switch" aria-checked="true" tabindex="0"></div>
+              </div>
+              <div class="toggle-row">
+                <div><div class="t-name">Dashboard</div><div class="t-desc">Real-time alerts in your control center.</div></div>
+                <div class="big-toggle on" data-notif="dashboard" role="switch" aria-checked="true" tabindex="0"></div>
+              </div>
+              <div class="toggle-row">
+                <div><div class="t-name">WhatsApp</div><div class="t-desc">Forward important alerts to your own WhatsApp.</div></div>
+                <div class="big-toggle" data-notif="whatsapp" role="switch" aria-checked="false" tabindex="0"></div>
+              </div>
+              <input type="hidden" name="notifications" id="notificationsInput" value='{"email":true,"dashboard":true,"whatsapp":false}'>
+            </section>
+        </form>
+      </div>
+
+      <div class="action-bar" id="actionBar">
+        <button class="btn btn-ghost" id="backBtn" style="display:none;" aria-label="Go back"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+        <button class="btn btn-primary" id="continueBtn" type="button"><span id="continueLabel">Create Account</span></button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FULL SCREEN: WELCOME -->
+<section class="full-screen" id="screen-welcome" aria-label="Welcome screen">
+  <div class="full-inner">
+    <div class="fs-illustration">
+      <svg width="180" height="150" viewBox="0 0 180 150" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Welcome illustration">
+        <circle cx="90" cy="75" r="70" fill="#EEF2FF"/>
+        <rect x="50" y="46" width="80" height="62" rx="18" fill="#4F46E5"/>
+        <circle cx="72" cy="76" r="7" fill="#fff"/>
+        <circle cx="108" cy="76" r="7" fill="#fff"/>
+        <rect x="78" y="94" width="24" height="6" rx="3" fill="#fff" opacity=".8"/>
+        <rect x="82" y="32" width="16" height="16" rx="4" fill="#C7D2FE"/>
+        <circle cx="90" cy="26" r="5" fill="#C7D2FE"/>
+        <circle cx="34" cy="46" r="6" fill="#C7D2FE"/>
+        <circle cx="150" cy="100" r="8" fill="#C7D2FE"/>
+        <circle cx="146" cy="40" r="4" fill="#4F46E5"/>
+      </svg>
+    </div>
+    <h1>Welcome to Atom AI</h1>
+    <p class="sub">Let us personalize your AI assistant.</p>
+    <button class="btn btn-primary" id="continueSetupBtn" type="button">Continue Setup</button>
+  </div>
+</section>
+
+<!-- FULL SCREEN: FINISH -->
+<section class="full-screen" id="screen-finish" aria-label="Setup complete">
+  <div class="full-inner">
+    <div class="check-circle" aria-hidden="true">
+      <svg viewBox="0 0 96 96" fill="none">
+        <circle class="circle-path" cx="48" cy="48" r="44" stroke="#4F46E5" stroke-width="5" fill="#EEF2FF"/>
+        <path class="tick-path" d="M30 49 L43 62 L67 35" stroke="#4F46E5" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+    </div>
+    <h1>Your AI assistant is ready.</h1>
+    <p class="sub">Here is a quick summary of your setup.</p>
+    <div class="summary-card">
+      <div class="summary-row"><span class="s-label">Business Name</span><span class="s-value" id="sumBizName">—</span></div>
+      <div class="summary-row"><span class="s-label">Number of Services</span><span class="s-value" id="sumServices">—</span></div>
+      <div class="summary-row"><span class="s-label">Auto Reply Status</span><span class="s-value" id="sumAutoReply">—</span></div>
+      <div class="summary-row"><span class="s-label">Notifications Enabled</span><span class="s-value" id="sumNotifs">—</span></div>
+    </div>
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary" id="gotoDashboardBtn"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i> Go to Dashboard</a>
+  </div>
+</section>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+</div>
+<script>
+    (function() {
+    'use strict';
+
+    /* ============================= STATE ============================= */
+    var DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    var STATE = {
+        account: { username:"", email:"", phone:"", password:"", confirm:"", agree:false },
+        business: {
+        name:"", description:"", email:"", phone:"", location:"",
+        hours: Object.fromEntries(DAYS.map(d => [d, { closed: (d==="Saturday"||d==="Sunday"), open:"09:00", close:"18:00" }]))
+        },
+        services: [ { name:"", description:"", price:"", website:"", social:"" } ],
+        ai: { greeting:"Hi! Thanks for reaching out — how can I help today?", away:"I am away right now, but Atom AI can help in the meantime.", tone:"Professional", length:"Balanced", autoReply:true, notifications:{ email:true, dashboard:true, whatsapp:false } }
+    };
+
+    var STEPS = ["account","welcome","business","services","ai","finish"];
+    var PROGRESS_LABELS = ["Account","Business","Services","AI Settings","Complete"];
+    var PROGRESS_MAP = { account:0, business:1, services:2, ai:3, finish:4 };
+    var currentStep = "account";
+    var touched = {};
+
+    var BRAND_CONTENT = {
+        account: { h:"Build your intelligent<br/>WhatsApp assistant in minutes.", p:"Atom AI answers questions, saves leads, and keeps your customers taken care of — even when you are offline." },
+        business:{ h:"Every great assistant<br/>starts with knowing you.", p:"Tell Atom AI about your business so it can answer questions accurately, in your voice." },
+        services:{ h:"Show off what<br/>you offer.", p:"Atom AI uses your services and pricing to answer questions and qualify leads automatically." },
+        ai:      { h:"Give it a voice<br/>that feels like you.", p:"Fine-tune tone, response style, and how Atom AI keeps you in the loop." }
+    };
+
+    /* ============================= HELPERS ============================= */
+    function $(id){ return document.getElementById(id); }
+
+    function showToast(msg, type){
+        type = type || "default";
+        var el = document.createElement("div");
+        el.className = "toast" + (type !== "default" ? " " + type : "");
+        var icon = type === "error" ? "fa-circle-exclamation" : type === "success" ? "fa-circle-check" : "fa-circle-info";
+        el.innerHTML = '<i class="fa-solid ' + icon + '" aria-hidden="true"></i><span>' + escapeHtml(msg) + '</span>';
+        $("toastContainer").appendChild(el);
+        setTimeout(function(){ el.classList.add("hide"); setTimeout(function(){ el.remove(); }, 250); }, 3200);
+    }
+
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function setFieldError(fieldId, msg){
+        var field = $(fieldId), errId = "err-" + fieldId.replace("f-",""), err = $(errId);
+        if(msg){
+        field.classList.add("invalid");
+        if(err){ err.textContent = msg; err.classList.add("show"); }
+        } else {
+        field.classList.remove("invalid");
+        if(err){ err.classList.remove("show"); err.textContent = ""; }
+        }
+    }
+
+    function emailValid(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function phoneValid(v){ return /^[+\d][\d\s().-]{6,}$/.test(v); }
+
+    /* ============================= PROGRESS BAR ============================= */
+    function buildProgress(){
+        var track = $("progressTrack");
+        track.querySelectorAll(".progress-step").forEach(function(n){ n.remove(); });
+        PROGRESS_LABELS.forEach(function(label, i){
+        var step = document.createElement("div");
+        step.className = "progress-step";
+        step.innerHTML = '<div class="progress-circle">' + (i+1) + '</div><div class="progress-label">' + escapeHtml(label) + '</div>';
+        track.appendChild(step);
+        });
+    }
+
+    function renderProgress(){
+        var idx = PROGRESS_MAP[currentStep];
+        var wrap = $("progressWrap");
+        if(idx === undefined){ wrap.classList.remove("show"); return; }
+        wrap.classList.add("show");
+        var steps = document.querySelectorAll(".progress-step");
+        steps.forEach(function(s, i){
+        s.classList.remove("active","done");
+        var circle = s.querySelector(".progress-circle");
+        if(i < idx){ s.classList.add("done"); circle.innerHTML = '<i class="fa-solid fa-check" style="font-size:11px;" aria-hidden="true"></i>'; }
+        else if(i === idx){ s.classList.add("active"); circle.textContent = i+1; }
+        else { circle.textContent = i+1; }
+        });
+        $("progressWrap").setAttribute("aria-valuenow", idx+1);
+        var pct = (idx / (PROGRESS_LABELS.length-1)) * 100;
+        $("progressFill").style.width = pct + "%";
+    }
+
+    /* ============================= STEP NAVIGATION ============================= */
+    function goToStep(step, skeleton){
+        skeleton = skeleton !== false;
+        var isSplit = ["account","business","services","ai"].indexOf(step) !== -1;
+        var doSwap = function(){
+        document.querySelectorAll(".full-screen").forEach(function(s){ s.classList.remove("active"); });
+        $("splitLayout").classList.toggle("show", isSplit);
+        if(isSplit){
+            document.querySelectorAll(".step-screen").forEach(function(s){ s.classList.toggle("active", s.dataset.step === step); });
+            $("backBtn").style.display = step === "account" ? "none" : "inline-flex";
+            $("continueLabel").textContent = step === "account" ? "Create Account" : step === "ai" ? "Finish Setup" : "Continue";
+            var bc = BRAND_CONTENT[step];
+            if(bc){ $("brandHeading").innerHTML = bc.h; $("brandSub").textContent = bc.p; }
+            if(step === "business") renderHours();
+            if(step === "services") renderServices();
+            if(step === "ai") renderAiStep();
+        } else {
+            $("screen-" + step).classList.add("active");
+            if(step === "finish") renderSummary();
+        }
+        currentStep = step;
+        renderProgress();
+        window.scrollTo({top:0, behavior:"smooth"});
+        $("formCard").style.display = "block";
+        $("skeletonWrap").classList.remove("show");
+        };
+
+        if(skeleton && isSplit){
+        $("formCard").style.display = "none";
+        $("skeletonWrap").classList.add("show");
+        setTimeout(doSwap, 380);
+        } else {
+        doSwap();
+        }
+    }
+
+    /* ============================= VALIDATION: ACCOUNT ============================= */
+    function validateAccount(showErrors){
+        var ok = true;
+        var u = $("in-username").value.trim();
+        if(u.length < 3){ if(showErrors) setFieldError("f-username","Username must be at least 3 characters."); ok=false; }
+        else setFieldError("f-username", null);
+
+        var e = $("in-email").value.trim();
+        if(!emailValid(e)){ if(showErrors) setFieldError("f-email","Enter a valid email address."); ok=false; }
+        else setFieldError("f-email", null);
+
+        var p = $("in-phone").value.trim();
+        if(!phoneValid(p)){ if(showErrors) setFieldError("f-phone","Enter a valid phone number."); ok=false; }
+        else setFieldError("f-phone", null);
+
+        var pw = $("in-password").value;
+        if(pw.length < 8){ if(showErrors) setFieldError("f-password","Password must be at least 8 characters."); ok=false; }
+        else setFieldError("f-password", null);
+
+        var cpw = $("in-confirm").value;
+        if(cpw !== pw || cpw.length === 0){ if(showErrors) setFieldError("f-confirm","Passwords do not match."); ok=false; }
+        else setFieldError("f-confirm", null);
+
+        if(!STATE.account.agree){ if(showErrors) $("err-agree").textContent = "You must accept the Terms and Privacy Policy to continue."; if(showErrors) $("err-agree").classList.add("show"); ok=false; }
+        else { $("err-agree").classList.remove("show"); }
+
+        return ok;
+    }
+
+    function updatePasswordStrength(){
+        var pw = $("in-password").value;
+        var score = 0;
+        if(pw.length >= 8) score++;
+        if(/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+        if(/\d/.test(pw)) score++;
+        if(/[^A-Za-z0-9]/.test(pw)) score++;
+        var bars = document.querySelectorAll("#pwStrength span");
+        var colors = ["var(--danger)","var(--warning)","#84CC16","var(--success)"];
+        var labels = ["Weak","Fair","Good","Strong"];
+        bars.forEach(function(b, i){ b.style.background = i < score ? colors[Math.max(score-1,0)] : "var(--border-soft)"; });
+        $("pwStrengthLabel").textContent = pw.length === 0 ? "\u00A0" : labels[Math.max(score-1,0)];
+    }
+
+    $("in-username").addEventListener("input", function(){ STATE.account.username = $("in-username").value; if(touched.username) validateAccount(true); });
+    $("in-email").addEventListener("input", function(){ STATE.account.email = $("in-email").value; if(touched.email) validateAccount(true); });
+    $("in-phone").addEventListener("input", function(){ STATE.account.phone = $("in-phone").value; if(touched.phone) validateAccount(true); });
+    $("in-password").addEventListener("input", function(){ STATE.account.password = $("in-password").value; updatePasswordStrength(); if(touched.password) validateAccount(true); });
+    $("in-confirm").addEventListener("input", function(){ STATE.account.confirm = $("in-confirm").value; if(touched.confirm) validateAccount(true); });
+    ["username","email","phone","password","confirm"].forEach(function(f){
+        $("in-" + f).addEventListener("blur", function(){ touched[f] = true; validateAccount(true); });
+    });
+
+    $("togglePw").addEventListener("click", function(){
+        var inp = $("in-password");
+        var show = inp.type === "password";
+        inp.type = show ? "text" : "password";
+        $("togglePw").innerHTML = '<i class="fa-solid fa-eye' + (show ? '-slash' : '') + '" aria-hidden="true"></i>';
+        $("togglePw").setAttribute("aria-label", show ? "Hide password" : "Show password");
+    });
+
+    $("toggleConfirm").addEventListener("click", function(){
+        var inp = $("in-confirm");
+        var show = inp.type === "password";
+        inp.type = show ? "text" : "password";
+        $("toggleConfirm").innerHTML = '<i class="fa-solid fa-eye' + (show ? '-slash' : '') + '" aria-hidden="true"></i>';
+        $("toggleConfirm").setAttribute("aria-label", show ? "Hide password" : "Show password");
+    });
+
+    function setAgree(val){
+        STATE.account.agree = val;
+        $("agreeBox").classList.toggle("checked", val);
+        $("agreeBox").setAttribute("aria-checked", val);
+        if(val) { $("err-agree").classList.remove("show"); }
+    }
+
+    $("agreeBox").addEventListener("click", function(){ setAgree(!STATE.account.agree); });
+    $("agreeBox").addEventListener("keydown", function(e){ if(e.key === " " || e.key === "Enter"){ e.preventDefault(); setAgree(!STATE.account.agree); } });
+
+    /* ============================= BUSINESS HOURS ============================= */
+    function renderHours(){
+        $("in-bizname").value = STATE.business.name;
+        $("in-bizdesc").value = STATE.business.description;
+        $("in-bizemail").value = STATE.business.email;
+        $("in-bizphone").value = STATE.business.phone;
+        $("in-bizlocation").value = STATE.business.location;
+
+        $("hoursTable").innerHTML = DAYS.map(function(day){
+        var d = STATE.business.hours[day];
+        return '<div class="hours-row">' +
+            '<span class="hours-day">' + day + '</span>' +
+            '<div class="hours-times">' +
+            '<input type="time" value="' + d.open + '" data-day="' + day + '" data-field="open"' + (d.closed ? ' disabled' : '') + '>' +
+            '<span class="hours-sep">to</span>' +
+            '<input type="time" value="' + d.close + '" data-day="' + day + '" data-field="close"' + (d.closed ? ' disabled' : '') + '>' +
+            '</div>' +
+            '<div class="closed-toggle">' +
+            '<span>Closed</span>' +
+            '<div class="mini-toggle ' + (d.closed ? "on" : "") + '" data-day-toggle="' + day + '" role="switch" aria-checked="' + d.closed + '" tabindex="0"></div>' +
+            '</div>' +
+        '</div>';
+        }).join("");
+
+        $("hoursTable").querySelectorAll("input[type=time]").forEach(function(inp){
+        inp.addEventListener("input", function(){
+            STATE.business.hours[inp.dataset.day][inp.dataset.field] = inp.value;
+        });
+        });
+        $("hoursTable").querySelectorAll("[data-day-toggle]").forEach(function(t){
+        t.addEventListener("click", function(){
+            var day = t.dataset.dayToggle;
+            STATE.business.hours[day].closed = !STATE.business.hours[day].closed;
+            renderHours();
+        });
+        t.addEventListener("keydown", function(e){
+            if(e.key === " " || e.key === "Enter"){
+            e.preventDefault();
+            var day = t.dataset.dayToggle;
+            STATE.business.hours[day].closed = !STATE.business.hours[day].closed;
+            renderHours();
+            }
+        });
+        });
+    }
+
+    ["bizname","bizdesc","bizemail","bizphone","bizlocation"].forEach(function(f){
+        $("in-" + f).addEventListener("input", function(){
+        var map = { bizname:"name", bizdesc:"description", bizemail:"email", bizphone:"phone", bizlocation:"location" };
+        STATE.business[map[f]] = $("in-" + f).value;
+        if(touched[f]) validateBusiness(true);
+        });
+        $("in-" + f).addEventListener("blur", function(){ touched[f] = true; validateBusiness(true); });
+    });
+
+    function validateBusiness(showErrors){
+        var ok = true;
+        if(STATE.business.name.trim().length < 2){ if(showErrors) setFieldError("f-bizname","Enter your business name."); ok=false; } else setFieldError("f-bizname", null);
+        if(STATE.business.description.trim().length < 10){ if(showErrors) setFieldError("f-bizdesc","Add a short description (10+ characters)."); ok=false; } else setFieldError("f-bizdesc", null);
+        if(!emailValid(STATE.business.email)){ if(showErrors) setFieldError("f-bizemail","Enter a valid business email."); ok=false; } else setFieldError("f-bizemail", null);
+        if(!phoneValid(STATE.business.phone)){ if(showErrors) setFieldError("f-bizphone","Enter a valid business phone number."); ok=false; } else setFieldError("f-bizphone", null);
+        if(STATE.business.location.trim().length < 2){ if(showErrors) setFieldError("f-bizlocation","Enter your business location."); ok=false; } else setFieldError("f-bizlocation", null);
+        return ok;
+    }
+
+    /* ============================= SERVICES ============================= */
+    function renderServices(){
+        $("servicesList").innerHTML = STATE.services.map(function(s, i){
+        return '<div class="service-card">' +
+            '<div class="service-card-head">' +
+            '<span>Service ' + (i+1) + '</span>' +
+            (STATE.services.length > 1 ? '<button type="button" class="service-remove" data-remove-service="' + i + '" aria-label="Remove service ' + (i+1) + '"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>' : '') +
+            '</div>' +
+            '<div class="field-fl">' +
+            '<input type="text" placeholder=" " value="' + s.name.replace(/"/g,'&quot;') + '" data-svc="' + i + '" data-field="name" name="service_name_' + i + '">' +
+            '<label>Service Name</label>' +
+            '</div>' +
+            '<div class="field-fl">' +
+            '<textarea placeholder=" " data-svc="' + i + '" data-field="description" name="service_desc_' + i + '">' + s.description + '</textarea>' +
+            '<label>Description</label>' +
+            '</div>' +
+            '<div class="field-fl">' +
+            '<input type="text" placeholder=" " value="' + s.price.replace(/"/g,'&quot;') + '" data-svc="' + i + '" data-field="price" name="service_price_' + i + '">' +
+            '<label>Price</label>' +
+            '</div>' +
+            '<div class="field-fl">' +
+            '<input type="url" placeholder=" " value="' + s.website.replace(/"/g,'&quot;') + '" data-svc="' + i + '" data-field="website" name="service_website_' + i + '">' +
+            '<label>Website (optional)</label>' +
+            '</div>' +
+            '<div class="field-fl" style="margin-bottom:0;">' +
+            '<input type="text" placeholder=" " value="' + s.social.replace(/"/g,'&quot;') + '" data-svc="' + i + '" data-field="social" name="service_social_' + i + '">' +
+            '<label>Social Media Link (optional)</label>' +
+            '</div>' +
+        '</div>';
+        }).join("");
+
+        $("servicesList").querySelectorAll("[data-svc]").forEach(function(inp){
+        inp.addEventListener("input", function(){
+            STATE.services[parseInt(inp.dataset.svc)][inp.dataset.field] = inp.value;
+        });
+        });
+        $("servicesList").querySelectorAll("[data-remove-service]").forEach(function(btn){
+        btn.addEventListener("click", function(){
+            STATE.services.splice(parseInt(btn.dataset.removeService), 1);
+            renderServices();
+        });
+        });
+    }
+
+    $("addServiceBtn").addEventListener("click", function(){
+        STATE.services.push({ name:"", description:"", price:"", website:"", social:"" });
+        renderServices();
+        showToast("New service card added.");
+    });
+
+    function validateServices(showErrors){
+        var ok = STATE.services.every(function(s){ return s.name.trim().length > 0 && s.description.trim().length > 0 && s.price.trim().length > 0; });
+        if(showErrors){
+        $("err-services").classList.toggle("show", !ok);
+        $("err-services").textContent = "Each service needs a name, description, and price.";
+        }
+        return ok;
+    }
+
+    /* ============================= AI PERSONALITY ============================= */
+    function renderAiStep(){
+        $("in-greeting").value = STATE.ai.greeting;
+        $("in-away").value = STATE.ai.away;
+        document.querySelectorAll("#toneRow .option-pill").forEach(function(b){ b.classList.toggle("selected", b.dataset.tone === STATE.ai.tone); });
+        document.querySelectorAll("#lengthRow .option-pill").forEach(function(b){ b.classList.toggle("selected", b.dataset.length === STATE.ai.length); });
+        $("autoReplyToggle").classList.toggle("on", STATE.ai.autoReply);
+        document.querySelectorAll("[data-notif]").forEach(function(t){ t.classList.toggle("on", STATE.ai.notifications[t.dataset.notif]); });
+
+        // Update hidden inputs
+        $("toneInput").value = STATE.ai.tone;
+        $("lengthInput").value = STATE.ai.length;
+        $("autoReplyInput").value = STATE.ai.autoReply ? "true" : "false";
+        $("notificationsInput").value = JSON.stringify(STATE.ai.notifications);
+    }
+
+    $("in-greeting").addEventListener("input", function(){ STATE.ai.greeting = $("in-greeting").value; if(touched.greeting) validateAi(true); });
+    $("in-away").addEventListener("input", function(){ STATE.ai.away = $("in-away").value; if(touched.away) validateAi(true); });
+    $("in-greeting").addEventListener("blur", function(){ touched.greeting = true; validateAi(true); });
+    $("in-away").addEventListener("blur", function(){ touched.away = true; validateAi(true); });
+
+    document.querySelectorAll("#toneRow .option-pill").forEach(function(btn){
+        btn.addEventListener("click", function(){
+        STATE.ai.tone = btn.dataset.tone;
+        document.querySelectorAll("#toneRow .option-pill").forEach(function(b){ b.setAttribute("aria-checked", "false"); });
+        btn.setAttribute("aria-checked", "true");
+        renderAiStep();
+        });
+    });
+
+    document.querySelectorAll("#lengthRow .option-pill").forEach(function(btn){
+        btn.addEventListener("click", function(){
+        STATE.ai.length = btn.dataset.length;
+        document.querySelectorAll("#lengthRow .option-pill").forEach(function(b){ b.setAttribute("aria-checked", "false"); });
+        btn.setAttribute("aria-checked", "true");
+        renderAiStep();
+        });
+    });
+
+    $("autoReplyToggle").addEventListener("click", function(){
+        STATE.ai.autoReply = !STATE.ai.autoReply;
+        $("autoReplyToggle").setAttribute("aria-checked", STATE.ai.autoReply);
+        renderAiStep();
+    });
+    $("autoReplyToggle").addEventListener("keydown", function(e){
+        if(e.key === " " || e.key === "Enter"){
+        e.preventDefault();
+        STATE.ai.autoReply = !STATE.ai.autoReply;
+        $("autoReplyToggle").setAttribute("aria-checked", STATE.ai.autoReply);
+        renderAiStep();
+        }
+    });
+
+    document.querySelectorAll("[data-notif]").forEach(function(t){
+        t.addEventListener("click", function(){
+        var k = t.dataset.notif;
+        STATE.ai.notifications[k] = !STATE.ai.notifications[k];
+        t.setAttribute("aria-checked", STATE.ai.notifications[k]);
+        renderAiStep();
+        });
+        t.addEventListener("keydown", function(e){
+        if(e.key === " " || e.key === "Enter"){
+            e.preventDefault();
+            var k = t.dataset.notif;
+            STATE.ai.notifications[k] = !STATE.ai.notifications[k];
+            t.setAttribute("aria-checked", STATE.ai.notifications[k]);
+            renderAiStep();
+        }
+        });
+    });
+
+    document.getElementById("businessHoursInput").value =
+        JSON.stringify(STATE.business.hours);
+
+    function validateAi(showErrors){
+        var ok = true;
+        if(STATE.ai.greeting.trim().length < 5){ if(showErrors) setFieldError("f-greeting","Add a short greeting message."); ok=false; } else setFieldError("f-greeting", null);
+        if(STATE.ai.away.trim().length < 5){ if(showErrors) setFieldError("f-away","Add a short away message."); ok=false; } else setFieldError("f-away", null);
+        return ok;
+    }
+
+    /* ============================= SUMMARY ============================= */
+    function renderSummary(){
+        $("sumBizName").textContent = STATE.business.name || "—";
+        $("sumServices").textContent = STATE.services.length;
+        $("sumAutoReply").textContent = STATE.ai.autoReply ? "Enabled" : "Disabled";
+        var notifs = Object.entries(STATE.ai.notifications).filter(function(entry){ return entry[1]; }).map(function(entry){ return entry[0][0].toUpperCase() + entry[0].slice(1); });
+        $("sumNotifs").textContent = notifs.length ? notifs.join(", ") : "None";
+    }
+
+    /* ============================= ACTION BAR ============================= */
+    $("backBtn").addEventListener("click", function(){
+        var order = ["account","business","services","ai"];
+        var idx = order.indexOf(currentStep);
+        if(idx > 0) goToStep(order[idx-1]);
+    });
+
+    $("continueBtn").addEventListener("click", function(){
+        var valid = true;
+        if(currentStep === "account"){
+        touched = { username:true, email:true, phone:true, password:true, confirm:true };
+        valid = validateAccount(true);
+        } else if(currentStep === "business"){
+        touched.name = touched.description = touched.email = touched.phone = touched.location = true;
+        valid = validateBusiness(true);
+        } else if(currentStep === "services"){
+        valid = validateServices(true);
+        } else if(currentStep === "ai"){
+        touched.greeting = touched.away = true;
+        valid = validateAi(true);
+        }
+
+        if(!valid){
+        $("formCard").classList.add("shake");
+        setTimeout(function(){ $("formCard").classList.remove("shake"); }, 400);
+        showToast("Please fix the highlighted fields before continuing.", "error");
+        return;
+        }
+
+        var btn = $("continueBtn");
+        var originalLabel = $("continueLabel").textContent;
+        btn.disabled = true;
+        $("continueLabel").innerHTML = '<span class="spinner"></span>';
+
+        setTimeout(function () {
+
+            if (currentStep === "ai") {
+                $("continueBtn").disabled = true;
+                $("continueLabel").innerHTML =
+                    '<span class="spinner"></span> Creating your assistant...';
+
+                $("signupForm").submit();
+                return;
+            }
+
+            btn.disabled = false;
+            $("continueLabel").textContent = originalLabel;
+
+            if (currentStep === "account") {
+                showToast("Account created successfully!", "success");
+                goToStep("welcome", false);
+            } else if (currentStep === "business") {
+                goToStep("services");
+            } else if (currentStep === "services") {
+                goToStep("ai");
+            }
+
+        }, 550);
+    });
+    showToast("Account information looks good.", "success");
+
+    $("continueSetupBtn").addEventListener("click", function(){ goToStep("business"); });
+
+    /* ============================= INIT ============================= */
+    buildProgress();
+    goToStep("account", false);
+    updatePasswordStrength();
+    })();
+</script>
+{% endblock %}
