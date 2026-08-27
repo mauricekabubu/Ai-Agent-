@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In · Atom AI{% endblock %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --bg:#F8F9FB; --card:#FFFFFF; --border:#E5E7EB; --border-soft:#EEF0F3;
+    --indigo:#4F46E5; --indigo-dark:#4338CA; --indigo-light:#EEF2FF; --indigo-soft:#C7D2FE;
+    --heading:#111827; --text-2:#374151; --text-3:#6B7280; --text-4:#9CA3AF;
+    --green:#10B981; --green-light:#ECFDF5;
+    --red:#EF4444; --red-light:#FEF2F2;
+    --amber:#F59E0B; --amber-light:#FFFBEB;
+    --blue:#3B82F6; --blue-light:#EFF6FF;
+    --radius:14px; --radius-lg:16px;
+    --shadow: 0 1px 2px rgba(16,24,40,.04), 0 2px 8px rgba(16,24,40,.05);
+    --shadow-lg: 0 24px 60px rgba(17,24,39,.10);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--heading); -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent; overflow-x:hidden;
+  }
+  button{font-family:inherit; cursor:pointer; touch-action:manipulation;}
+  input{font-family:inherit;}
+  a{color:inherit;}
+  ::-webkit-scrollbar{width:8px;} ::-webkit-scrollbar-thumb{background:var(--border); border-radius:8px;}
+  :focus-visible{outline:2px solid var(--indigo); outline-offset:2px; border-radius:6px;}
+
+  /* ============ LAYOUT ============ */
+  .page{min-height:100vh; display:grid; grid-template-columns:1.05fr 1fr;}
+  .left{
+    background:var(--indigo); color:#fff; display:flex; flex-direction:column; justify-content:center;
+    padding:64px 64px; position:relative; overflow:hidden;
+  }
+  .left::before{content:''; position:absolute; width:420px; height:420px; border-radius:50%; background:rgba(255,255,255,.06); top:-140px; right:-140px;}
+  .left::after{content:''; position:absolute; width:260px; height:260px; border-radius:50%; background:rgba(255,255,255,.05); bottom:-100px; left:-70px;}
+  .left-inner{position:relative; z-index:1; max-width:460px;}
+  .brand-logo{display:flex; align-items:center; gap:10px; margin-bottom:56px;}
+  .brand-logo .mark{width:36px; height:36px; border-radius:11px; background:rgba(255,255,255,.16); display:flex; align-items:center; justify-content:center; font-size:15px;}
+  .brand-logo span{font-weight:700; font-size:17px; letter-spacing:-0.01em;}
+
+  .illustration{margin-bottom:40px; animation:float 5s ease-in-out infinite;}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  @media (prefers-reduced-motion: reduce){ .illustration{animation:none;} }
+
+  .left h1{font-size:32px; font-weight:800; letter-spacing:-0.02em; margin-bottom:10px;}
+  .left p.sub{font-size:15.5px; color:rgba(255,255,255,.82); line-height:1.6; margin-bottom:38px; max-width:400px;}
+
+  .feature-list{display:flex; flex-direction:column; gap:16px;}
+  .feature-item{display:flex; align-items:center; gap:12px; font-size:14.5px; font-weight:500; color:rgba(255,255,255,.94);}
+  .feature-item .fi-check{width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,.16); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:11px;}
+
+  .right{display:flex; align-items:center; justify-content:center; padding:40px 24px;}
+  .right-inner{width:100%; max-width:420px;}
+
+  .login-card{
+    background:var(--card); border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); border:1px solid var(--border-soft);
+    padding:40px 36px; animation:cardIn .5s ease;
+  }
+  @keyframes cardIn{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .card-head{margin-bottom:28px;}
+  .card-head h2{font-size:23px; font-weight:700; letter-spacing:-0.02em; margin-bottom:6px;}
+  .card-head p{font-size:14px; color:var(--text-3);}
+
+  /* ============ FLASH MESSAGES ============ */
+  .flash-stack{display:flex; flex-direction:column; gap:10px; margin-bottom:20px;}
+  .flash{
+    display:flex; align-items:flex-start; gap:10px; padding:13px 14px; border-radius:10px; font-size:13.5px;
+    background:var(--card); border:1px solid var(--border-soft); border-left:4px solid var(--border);
+    animation:flashIn .3s ease;
+  }
+  @keyframes flashIn{ from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:translateY(0);} }
+  .flash.hide{animation:flashOut .25s ease forwards;}
+  @keyframes flashOut{ to{opacity:0; transform:translateY(-6px); height:0; margin:0; padding:0;} }
+  .flash i.f-icon{font-size:14px; margin-top:1px;}
+  .flash .f-text{flex:1; color:var(--text-2); line-height:1.45;}
+  .flash .f-close{color:var(--text-4); background:none; border:none; font-size:12px; padding:2px;}
+  .flash .f-close:hover{color:var(--text-2);}
+  .flash-success{border-left-color:var(--green);} .flash-success i.f-icon{color:var(--green);}
+  .flash-error{border-left-color:var(--red);} .flash-error i.f-icon{color:var(--red);}
+  .flash-warning{border-left-color:var(--amber);} .flash-warning i.f-icon{color:var(--amber);}
+  .flash-info{border-left-color:var(--blue);} .flash-info i.f-icon{color:var(--blue);}
+
+  /* ============ FIELDS ============ */
+  .field{position:relative; margin-bottom:16px;}
+  .field-icon{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-4); font-size:14.5px; pointer-events:none; transition:color .15s;}
+  .field input{
+    width:100%; padding:14px 14px 14px 42px; border:1.5px solid var(--border); border-radius:var(--radius);
+    font-size:14.5px; background:var(--card); color:var(--heading); outline:none; transition:border-color .15s, box-shadow .15s;
+  }
+  .field input::placeholder{color:var(--text-4);}
+  .field input:focus{border-color:var(--indigo); box-shadow:0 0 0 3.5px var(--indigo-light);}
+  .field input:focus ~ .field-icon{color:var(--indigo);}
+  .field.invalid input{border-color:var(--red); background:var(--red-light);}
+  .field.invalid .field-icon{color:var(--red);}
+  .field-error{display:none; align-items:center; gap:6px; font-size:12px; color:var(--red); margin-top:6px; padding-left:2px;}
+  .field-error.show{display:flex;}
+  .password-field input{padding-right:44px;}
+  .pw-toggle{position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--text-4); background:none; border:none; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:8px;}
+  .pw-toggle:hover{color:var(--text-2); background:var(--bg);}
+
+  .capslock-hint{display:none; align-items:center; gap:6px; font-size:12px; color:var(--amber); margin-top:7px; padding-left:2px; font-weight:600;}
+  .capslock-hint.show{display:flex;}
+
+  .field-row{display:flex; align-items:center; justify-content:space-between; margin:6px 0 22px;}
+  .remember-row{display:flex; align-items:center; gap:9px;}
+  .check-box{width:19px; height:19px; border:1.5px solid var(--border); border-radius:6px; display:flex; align-items:center; justify-content:center; transition:.15s; background:var(--card); flex-shrink:0;}
+  .check-box.checked{background:var(--indigo); border-color:var(--indigo);}
+  .check-box i{font-size:10px; color:#fff; display:none;}
+  .check-box.checked i{display:block;}
+  .remember-row label{font-size:13.5px; color:var(--text-3); cursor:pointer; user-select:none;}
+  .forgot-link{font-size:13.5px; font-weight:600; color:var(--indigo);}
+  .forgot-link:hover{text-decoration:underline;}
+
+  /* ============ BUTTON ============ */
+  .btn-signin{
+    width:100%; padding:15px; border-radius:var(--radius); border:none; background:var(--indigo); color:#fff;
+    font-size:14.5px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:9px;
+    transition: transform .12s ease, background .15s, box-shadow .15s; min-height:52px;
+  }
+  .btn-signin:hover:not(:disabled){ background:var(--indigo-dark); transform:translateY(-1px); box-shadow:0 8px 20px rgba(79,70,229,.28); }
+  .btn-signin:active:not(:disabled){ transform:translateY(0); }
+  .btn-signin:disabled{ background:#C7CBD4; cursor:not-allowed; }
+  .spinner{width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; animation:spin .6s linear infinite;}
+  @keyframes spin{ to{transform:rotate(360deg);} }
+  .shake{animation:shake .4s;}
+  @keyframes shake{10%,90%{transform:translateX(-1px);}20%,80%{transform:translateX(2px);}30%,50%,70%{transform:translateX(-4px);}40%,60%{transform:translateX(4px);}}
+
+  .security-note{display:flex; align-items:center; gap:7px; justify-content:center; font-size:12px; color:var(--text-4); margin-top:16px;}
+
+  .divider-row{display:flex; align-items:center; gap:6px; font-size:13.5px; color:var(--text-3); justify-content:center; margin-top:22px;}
+  .create-link{color:var(--indigo); font-weight:700;}
+  .create-link:hover{text-decoration:underline;}
+
+  /* ============ FOOTER ============ */
+  .page-footer{margin-top:26px; text-align:center; font-size:12.5px; color:var(--text-4);}
+  .page-footer a{color:var(--text-3); margin:0 8px; font-weight:500;}
+  .page-footer a:hover{color:var(--indigo);}
+  .page-footer .dot{opacity:.5;}
+  .page-footer .ver{display:block; margin-top:6px; opacity:.7;}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1080px){
+    .left{padding:48px 40px;}
+    .illustration svg{width:170px; height:auto;}
+    .left h1{font-size:27px;}
+  }
+  @media (max-width: 860px){
+    .page{grid-template-columns:1fr;}
+    .left{display:none;}
+    .right{padding:32px 20px; align-items:flex-start; padding-top:56px;}
+  }
+  @media (max-width: 480px){
+    .login-card{padding:28px 22px; border-radius:16px; box-shadow:none; border:none;}
+    .right{padding:20px 16px;}
+    .field input{font-size:16px; padding-top:14px; padding-bottom:14px;} /* prevent iOS zoom */
+    .card-head h2{font-size:21px;}
+  }
+  @media (pointer:coarse){
+    .pw-toggle{width:32px; height:32px;}
+    .check-box{width:21px; height:21px;}
+  }
+</style>
+
+<div class="page">
+
+  <!-- LEFT: BRAND / ILLUSTRATION -->
+  <div class="left">
+    <div class="left-inner">
+      <div class="brand-logo"><div class="mark"><i class="fa-solid fa-sparkles"></i></div><span>Atom AI</span></div>
+
+      <div class="illustration">
+        <svg width="200" height="150" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="20" width="140" height="94" rx="20" fill="rgba(255,255,255,.14)"/>
+          <rect x="48" y="40" width="104" height="13" rx="6.5" fill="rgba(255,255,255,.5)"/>
+          <rect x="48" y="61" width="72" height="13" rx="6.5" fill="rgba(255,255,255,.32)"/>
+          <rect x="48" y="82" width="88" height="13" rx="6.5" fill="rgba(255,255,255,.32)"/>
+          <circle cx="158" cy="26" r="9" fill="rgba(255,255,255,.6)"/>
+          <circle cx="36" cy="122" r="6" fill="rgba(255,255,255,.35)"/>
+          <circle cx="178" cy="112" r="5" fill="rgba(255,255,255,.4)"/>
+          <path d="M18 20 Q10 8 22 4" stroke="rgba(255,255,255,.3)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in to continue managing your AI assistant.</p>
+
+      <div class="feature-list">
+        <div class="feature-item"><span class="fi-check"><i class="fa-solid fa-check"></i></span>AI-Powered Conversations</div>
+        <div class="feature-item"><span class="fi-check"><i class="fa-solid fa-check"></i></span>Smart Auto Replies</div>
+        <div class="feature-item"><span class="fi-check"><i class="fa-solid fa-check"></i></span>Real-Time Notifications</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: LOGIN CARD -->
+  <div class="right">
+    <div class="right-inner">
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-stack">
+            {% for category, message in messages %}
+              <div class="flash flash-{{ category }}">
+                <i class="fa-solid f-icon fa-circle-{{ 'check' if category == 'success' else 'exclamation' if category in ['error','warning'] else 'info' }}"></i>
+                <span class="f-text">{{ message }}</span>
+                <button type="button" class="f-close" onclick="this.parentElement.classList.add('hide'); setTimeout(()=>this.parentElement.remove(),250)"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <div class="login-card">
+        <div class="card-head">
+          <h2>Sign In</h2>
+          <p>Access your Atom AI dashboard.</p>
+        </div>
+
+        <form id="loginForm" action="{{ url_for('auth.login') }}" method="POST" autocomplete="off">
+          <div class="field" id="f-username">
+            <i class="fa-solid fa-user field-icon"></i>
+            <input type="text" name="username" id="in-username" placeholder="Username" autocomplete="username" autofocus>
+          </div>
+          <div class="field-error" id="err-username"><i class="fa-solid fa-circle-exclamation"></i><span>Enter your username.</span></div>
+
+          <div class="field password-field" id="f-password">
+            <i class="fa-solid fa-lock field-icon"></i>
+            <input type="password" name="password" id="in-password" placeholder="Password" autocomplete="current-password">
+            <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password"><i class="fa-solid fa-eye"></i></button>
+          </div>
+          <div class="capslock-hint" id="capsHint"><i class="fa-solid fa-triangle-exclamation"></i> Caps Lock is on</div>
+          <div class="field-error" id="err-password"><i class="fa-solid fa-circle-exclamation"></i><span>Enter your password.</span></div>
+
+          <div class="field-row">
+            <div class="remember-row">
+              <div class="check-box" id="rememberBox" role="checkbox" aria-checked="false" tabindex="0"><i class="fa-solid fa-check"></i></div>
+              <label id="rememberLabel">Remember me</label>
+              <input type="checkbox" name="remember" id="rememberInput" style="display:none;">
+            </div>
+            <a href="#" class="forgot-link" id="forgotLink">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="btn-signin" id="signinBtn">
+            <span id="signinLabel">Sign In</span>
+          </button>
+
+          <p class="security-note"><i class="fa-solid fa-shield-halved"></i> Your credentials are securely encrypted.</p>
+        </form>
+
+        <div class="divider-row">
+          <span>Don't have an account?</span><a href="{{url_for('auth.register')}}" class="create-link" id="createLink">Create Account</a>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        © 2026 Atom AI <span class="dot">·</span> <a href="#">Privacy Policy</a> <span class="dot">·</span> <a href="#">Terms of Service</a>
+        <span class="ver">v2.4.1</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="toast-container" id="toastContainer" style="position:fixed; top:20px; right:20px; z-index:999; display:flex; flex-direction:column; gap:10px; max-width:320px;"></div>
+
+<script>
+function $(id){ return document.getElementById(id); }
+
+/* ============================= TOAST (for client-side hints only) ============================= */
+function showToast(msg, type="default"){
+  const el = document.createElement("div");
+  const bg = type==="error" ? "#DC2626" : type==="success" ? "#059669" : "#111827";
+  el.style.cssText = `background:${bg}; color:#fff; padding:13px 16px; border-radius:12px; font-size:13.5px; font-weight:500; display:flex; align-items:center; gap:10px; box-shadow:0 20px 50px rgba(17,24,39,.18); animation:flashIn .25s ease;`;
+  const icon = type==="error" ? "fa-circle-exclamation" : type==="success" ? "fa-circle-check" : "fa-circle-info";
+  el.innerHTML = `<i class="fa-solid ${icon}"></i><span>${msg}</span>`;
+  $("toastContainer").appendChild(el);
+  setTimeout(()=>{ el.style.transition="opacity .25s ease"; el.style.opacity="0"; setTimeout(()=>el.remove(),250); }, 3200);
+}
+
+/* ============================= PASSWORD TOGGLE ============================= */
+$("pwToggle").addEventListener("click", ()=>{
+  const inp = $("in-password");
+  const show = inp.type === "password";
+  inp.type = show ? "text" : "password";
+  $("pwToggle").innerHTML = `<i class="fa-solid fa-eye${show?'-slash':''}"></i>`;
+});
+
+/* ============================= CAPS LOCK DETECTION ============================= */
+$("in-password").addEventListener("keyup", (e)=>{
+  if(typeof e.getModifierState === "function"){
+    $("capsHint").classList.toggle("show", e.getModifierState("CapsLock"));
+  }
+});
+$("in-password").addEventListener("blur", ()=> $("capsHint").classList.remove("show"));
+
+/* ============================= REMEMBER ME (mirrors state into the real checkbox that submits) ============================= */
+let remembered = false;
+function setRemember(val){
+  remembered = val;
+  $("rememberBox").classList.toggle("checked", val);
+  $("rememberBox").setAttribute("aria-checked", val);
+  $("rememberInput").checked = val;
+}
+$("rememberBox").addEventListener("click", ()=> setRemember(!remembered));
+$("rememberBox").addEventListener("keydown", (e)=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); setRemember(!remembered); } });
+$("rememberLabel").addEventListener("click", ()=> setRemember(!remembered));
+
+/* ============================= LINKS ============================= */
+/* Swap href="#" for real url_for(...) targets once those routes exist, e.g.:
+   <a href="{{ url_for('auth.forgot_password') }}" ...>  */
+$("forgotLink").addEventListener("click", (e)=>{ if($("forgotLink").getAttribute("href")==="#"){ e.preventDefault(); showToast("Password reset route isn't wired up yet."); } });
+$("createLink").addEventListener("click", (e)=>{ if($("createLink").getAttribute("href")==="#"){ e.preventDefault(); showToast("Registration route isn't wired up yet."); } });
+
+/* ============================= CLIENT-SIDE VALIDATION ============================= */
+function setFieldError(fieldId, show){
+  $(fieldId).classList.toggle("invalid", show);
+  $("err-"+fieldId.replace("f-","")).classList.toggle("show", show);
+}
+function validate(){
+  const uOk = $("in-username").value.trim().length > 0;
+  const pOk = $("in-password").value.length > 0;
+  setFieldError("f-username", !uOk);
+  setFieldError("f-password", !pOk);
+  return uOk && pOk;
+}
+$("in-username").addEventListener("input", ()=>{ if($("f-username").classList.contains("invalid")) setFieldError("f-username", $("in-username").value.trim().length===0); });
+$("in-password").addEventListener("input", ()=>{ if($("f-password").classList.contains("invalid")) setFieldError("f-password", $("in-password").value.length===0); });
+
+/* ============================= SUBMIT ============================= */
+// Real Flask POST — no preventDefault(). We only block submission on validation
+// failure; on success the browser submits normally and the server response
+// (redirect, re-render with a flash message, etc.) takes over from here.
+let submitting = false;
+$("loginForm").addEventListener("submit", (e)=>{
+  if(submitting) return;
+
+  if(!validate()){
+    e.preventDefault();
+    document.querySelector(".login-card").classList.add("shake");
+    setTimeout(()=> document.querySelector(".login-card").classList.remove("shake"), 400);
+    showToast("Please fill in both fields.", "error");
+    return;
+  }
+
+  submitting = true;
+  const btn = $("signinBtn");
+  btn.disabled = true;
+  $("signinLabel").innerHTML = `<span class="spinner"></span> Signing in…`;
+  // Form now submits for real. If the server re-renders this page on failure
+  // (e.g. bad credentials), the disabled/spinner state resets naturally on reload.
+});
+</script>
+{% endblock %}
