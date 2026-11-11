@@ -1,6 +1,6 @@
 # AI Device Control Agent
 
-A simple AI-powered desktop assistant built with Python, LangGraph, LangChain, and Google's Gemini model. The agent uses natural language to understand user commands and execute actions on a Windows computer through custom tools.
+An AI-powered desktop assistant built with Python, LangGraph, LangChain, and Google's Gemini model. The agent uses natural language to understand user commands and execute actions on a Windows computer through custom tools.
 
 ## Features
 
